@@ -1,15 +1,15 @@
 {
-	"domain": "grohe_smarthome",
-	"name": "Grohe Smarthome for Sense and Blue",
+	"domain": "grohe_sense",
+	"name": "Grohe Sense and Blue",
 	"codeowners": ["@Flo-Schilli"],
 	"config_flow": true,
-	"documentation": "https://github.com/Flo-Schilli/ha-grohe_smarthome",
+	"documentation": "https://github.com/Flo-Schilli/homeassistant-grohe_sense",
 	"iot_class": "cloud_polling",
-	"issue_tracker": "https://github.com/Flo-Schilli/ha-grohe_smarthome/issues",
+	"issue_tracker": "https://github.com/Flo-Schilli/homeassistant-grohe_sense/issues",
 	"requirements": [
 		"dataclasses-json==0.6.7",
 		"lxml==5.3.0",
 		"python-benedict==0.34.0"
 	],
-	"version": "v1.0.0"
+	"version": "v0.22.2"
 }
