@@ -2,7 +2,7 @@ import os
 
 import yaml
 
-from custom_components.grohe_sense.dto.config_dtos import NotificationsDto, ConfigDto
+from custom_components.grohe_smarthome.dto.config_dtos import NotificationsDto, ConfigDto
 
 
 class ConfigLoader:

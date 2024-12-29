@@ -1,9 +1,9 @@
 import logging
 from typing import List
 
-from custom_components.grohe_sense.api.ondus_api import OndusApi
-from custom_components.grohe_sense.dto.ondus_dtos import Appliance
-from custom_components.grohe_sense.enum.ondus_types import GroheTypes
+from custom_components.grohe_smarthome.api.ondus_api import OndusApi
+from custom_components.grohe_smarthome.dto.ondus_dtos import Appliance
+from custom_components.grohe_smarthome.enum.ondus_types import GroheTypes
 
 _LOGGER = logging.getLogger(__name__)
 

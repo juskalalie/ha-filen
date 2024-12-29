@@ -6,15 +6,15 @@ from datetime import datetime
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
-from custom_components.grohe_sense.api.ondus_api import OndusApi
-from custom_components.grohe_sense.dto.grohe_device import GroheDevice
-from custom_components.grohe_sense.dto.ondus_dtos import Notification
-from custom_components.grohe_sense.entities.interface.coordinator_interface import CoordinatorInterface
+from custom_components.grohe_smarthome.api.ondus_api import OndusApi
+from custom_components.grohe_smarthome.dto.grohe_device import GroheDevice
+from custom_components.grohe_smarthome.dto.ondus_dtos import Notification
+from custom_components.grohe_smarthome.entities.interface.coordinator_interface import CoordinatorInterface
 
 _LOGGER = logging.getLogger(__name__)
 
 
-class BlueHomeCoordinator(DataUpdateCoordinator, CoordinatorInterface):
+class BlueProfCoordinator(DataUpdateCoordinator, CoordinatorInterface):
     def __init__(self, hass: HomeAssistant, domain: str, device: GroheDevice, api: OndusApi, polling: int = 300) -> None:
         super().__init__(hass, _LOGGER, name='Grohe Sense', update_interval=timedelta(seconds=polling), always_update=True)
         self._api = api
@@ -56,7 +56,7 @@ class BlueHomeCoordinator(DataUpdateCoordinator, CoordinatorInterface):
             return data
 
         except Exception as e:
-            _LOGGER.error("Error updating Grohe Blue Home data: %s", str(e))
+            _LOGGER.error("Error updating Grohe Blue Professional data: %s", str(e))
 
     async def get_initial_value(self) -> Dict[str, any]:
         return await self._get_data()

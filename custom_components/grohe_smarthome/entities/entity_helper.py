@@ -1,17 +1,17 @@
 import logging
 from typing import List
 
-from custom_components.grohe_sense.dto.config_dtos import ConfigDto, NotificationDto, NotificationsDto, SensorDto
-from custom_components.grohe_sense.dto.grohe_device import GroheDevice
-from custom_components.grohe_sense.entities.coordinator.blue_home_coordinator import BlueHomeCoordinator
-from custom_components.grohe_sense.entities.coordinator.blue_prof_coordinator import BlueProfCoordinator
-from custom_components.grohe_sense.entities.coordinator.guard_coordinator import GuardCoordinator
-from custom_components.grohe_sense.entities.coordinator.sense_coordinator import SenseCoordinator
-from custom_components.grohe_sense.entities.entity.sensor import Sensor
-from custom_components.grohe_sense.entities.entity.todo import Todo
-from custom_components.grohe_sense.entities.entity.valve import Valve
-from custom_components.grohe_sense.entities.interface.coordinator_interface import CoordinatorInterface
-from custom_components.grohe_sense.enum.ondus_types import GroheTypes
+from custom_components.grohe_smarthome.dto.config_dtos import ConfigDto, NotificationDto, NotificationsDto, SensorDto
+from custom_components.grohe_smarthome.dto.grohe_device import GroheDevice
+from custom_components.grohe_smarthome.entities.coordinator.blue_home_coordinator import BlueHomeCoordinator
+from custom_components.grohe_smarthome.entities.coordinator.blue_prof_coordinator import BlueProfCoordinator
+from custom_components.grohe_smarthome.entities.coordinator.guard_coordinator import GuardCoordinator
+from custom_components.grohe_smarthome.entities.coordinator.sense_coordinator import SenseCoordinator
+from custom_components.grohe_smarthome.entities.entity.sensor import Sensor
+from custom_components.grohe_smarthome.entities.entity.todo import Todo
+from custom_components.grohe_smarthome.entities.entity.valve import Valve
+from custom_components.grohe_smarthome.entities.interface.coordinator_interface import CoordinatorInterface
+from custom_components.grohe_smarthome.enum.ondus_types import GroheTypes
 
 _LOGGER = logging.getLogger(__name__)
 

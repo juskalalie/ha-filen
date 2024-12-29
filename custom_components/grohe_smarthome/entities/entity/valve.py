@@ -10,11 +10,11 @@ from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.update_coordinator import CoordinatorEntity, DataUpdateCoordinator
 from homeassistant.util import Throttle
 
-from custom_components.grohe_sense.dto.config_dtos import ValveDto
-from custom_components.grohe_sense.dto.grohe_device import GroheDevice
+from custom_components.grohe_smarthome.dto.config_dtos import ValveDto
+from custom_components.grohe_smarthome.dto.grohe_device import GroheDevice
 
-from custom_components.grohe_sense.entities.helper import Helper
-from custom_components.grohe_sense.entities.interface.coordinator_valve_interface import CoordinatorValveInterface
+from custom_components.grohe_smarthome.entities.helper import Helper
+from custom_components.grohe_smarthome.entities.interface.coordinator_valve_interface import CoordinatorValveInterface
 
 _LOGGER = logging.getLogger(__name__)
 

@@ -7,17 +7,17 @@ import voluptuous
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, ServiceCall, ServiceResponse, SupportsResponse
 from homeassistant.helpers import aiohttp_client
-from custom_components.grohe_sense.api.ondus_api import OndusApi
-from custom_components.grohe_sense.const import DOMAIN, CONF_USERNAME, CONF_PASSWORD, CONF_PLATFORM
-from custom_components.grohe_sense.dto.grohe_device import GroheDevice
-from custom_components.grohe_sense.entities.config_loader import ConfigLoader
-from custom_components.grohe_sense.entities.coordinator.blue_home_coordinator import BlueHomeCoordinator
-from custom_components.grohe_sense.entities.coordinator.blue_prof_coordinator import BlueProfCoordinator
-from custom_components.grohe_sense.entities.coordinator.guard_coordinator import GuardCoordinator
-from custom_components.grohe_sense.entities.coordinator.profile_coordinator import ProfileCoordinator
-from custom_components.grohe_sense.entities.coordinator.sense_coordinator import SenseCoordinator
-from custom_components.grohe_sense.entities.interface.coordinator_interface import CoordinatorInterface
-from custom_components.grohe_sense.enum.ondus_types import GroheTypes, OndusGroupByTypes, GroheTapType
+from custom_components.grohe_smarthome.api.ondus_api import OndusApi
+from custom_components.grohe_smarthome.const import DOMAIN, CONF_USERNAME, CONF_PASSWORD, CONF_PLATFORM
+from custom_components.grohe_smarthome.dto.grohe_device import GroheDevice
+from custom_components.grohe_smarthome.entities.config_loader import ConfigLoader
+from custom_components.grohe_smarthome.entities.coordinator.blue_home_coordinator import BlueHomeCoordinator
+from custom_components.grohe_smarthome.entities.coordinator.blue_prof_coordinator import BlueProfCoordinator
+from custom_components.grohe_smarthome.entities.coordinator.guard_coordinator import GuardCoordinator
+from custom_components.grohe_smarthome.entities.coordinator.profile_coordinator import ProfileCoordinator
+from custom_components.grohe_smarthome.entities.coordinator.sense_coordinator import SenseCoordinator
+from custom_components.grohe_smarthome.entities.interface.coordinator_interface import CoordinatorInterface
+from custom_components.grohe_smarthome.enum.ondus_types import GroheTypes, OndusGroupByTypes, GroheTapType
 
 _LOGGER = logging.getLogger(__name__)
 

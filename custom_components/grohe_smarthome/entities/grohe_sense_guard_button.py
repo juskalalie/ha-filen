@@ -3,8 +3,8 @@ import logging
 from homeassistant.components.button import ButtonEntity
 from homeassistant.helpers.device_registry import DeviceInfo
 
-from custom_components.grohe_sense.api.ondus_api import OndusApi
-from custom_components.grohe_sense.dto.grohe_device import GroheDevice
+from custom_components.grohe_smarthome.api.ondus_api import OndusApi
+from custom_components.grohe_smarthome.dto.grohe_device import GroheDevice
 
 _LOGGER = logging.getLogger(__name__)
 

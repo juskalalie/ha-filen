@@ -6,11 +6,11 @@ from datetime import datetime
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
-from custom_components.grohe_sense.api.ondus_api import OndusApi
-from custom_components.grohe_sense.dto.grohe_device import GroheDevice
-from custom_components.grohe_sense.dto.ondus_dtos import Notification
-from custom_components.grohe_sense.entities.interface.coordinator_interface import CoordinatorInterface
-from custom_components.grohe_sense.entities.interface.coordinator_valve_interface import CoordinatorValveInterface
+from custom_components.grohe_smarthome.api.ondus_api import OndusApi
+from custom_components.grohe_smarthome.dto.grohe_device import GroheDevice
+from custom_components.grohe_smarthome.dto.ondus_dtos import Notification
+from custom_components.grohe_smarthome.entities.interface.coordinator_interface import CoordinatorInterface
+from custom_components.grohe_smarthome.entities.interface.coordinator_valve_interface import CoordinatorValveInterface
 
 _LOGGER = logging.getLogger(__name__)
 

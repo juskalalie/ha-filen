@@ -6,7 +6,7 @@ from homeassistant.components.sensor import SensorDeviceClass
 from homeassistant.const import UnitOfTemperature, PERCENTAGE, UnitOfVolumeFlowRate, UnitOfPressure, UnitOfVolume, \
     UnitOfTime
 
-from custom_components.grohe_sense.enum.ondus_types import GroheTypes
+from custom_components.grohe_smarthome.enum.ondus_types import GroheTypes
 
 
 class SensorTypes(Enum):

@@ -10,9 +10,9 @@ import jwt
 from aiohttp import ClientSession
 from lxml import html
 
-from custom_components.grohe_sense.dto.ondus_dtos import Locations, Location, Room, Appliance, \
+from custom_components.grohe_smarthome.dto.ondus_dtos import Locations, Location, Room, Appliance, \
     ApplianceCommand, OndusToken, PressureMeasurementStart
-from custom_components.grohe_sense.enum.ondus_types import OndusGroupByTypes, GroheTypes
+from custom_components.grohe_smarthome.enum.ondus_types import OndusGroupByTypes, GroheTypes
 
 _LOGGER = logging.getLogger(__name__)
 
