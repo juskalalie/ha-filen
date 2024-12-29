@@ -1,0 +1,163 @@
+get_dashboard:
+  name: Get Dashboard Data
+  description: Exports data from the Grohe Dashboard endpoint
+
+get_appliance_data:
+  name: Get Appliance data
+  description: Get the actual appliance data for the provided device name
+  fields:
+    device_name:
+      name: Device name
+      description: The name of the device for which the data should be queried
+      required: true
+      selector:
+        text:
+    group_by:
+      name: Group by
+      description: Defines what time range the data should be grouped by
+      required: false
+      selector:
+        select:
+          mode: dropdown
+          options:
+            - Hour
+            - Day
+            - Week
+            - Month
+            - Year
+
+get_appliance_details:
+  name: Get Appliance details
+  description: Get the actual appliance details for the provided device name
+  fields:
+    device_name:
+      name: Device name
+      description: The name of the device for which the data should be queried
+      required: true
+      selector:
+        text:
+
+get_appliance_command:
+  name: Get Appliance command
+  description: Get the actual possible appliance commands for the provided device name
+  fields:
+    device_name:
+      name: Device name
+      description: The name of the device for which the data should be queried
+      required: true
+      selector:
+        text:
+
+set_appliance_command:
+  name: Set Appliance command
+  description: Send a command to the appliance for the provided device name
+  fields:
+    device_name:
+      name: Device name
+      description: The name of the device for which the data should be queried
+      required: true
+      selector:
+        text:
+    commands:
+      name: Commands to send
+      description: The commands which shall be send to the device
+      required: true
+      selector:
+        object:
+
+get_appliance_status:
+  name: Get Appliance status
+  description: Get the actual appliance status for the provided device name
+  fields:
+    device_name:
+      name: Device name
+      description: The name of the device for which the data should be queried
+      required: true
+      selector:
+        text:
+
+get_appliance_pressure_measurement:
+  name: Get Appliance pressure measurements
+  description: Get the actual appliance pressure measurements for the provided device name
+  fields:
+    device_name:
+      name: Device name
+      description: The name of the device for which the data should be queried
+      required: true
+      selector:
+        text:
+
+get_appliance_notifications:
+  name: Get Appliance notifications
+  description: Get the actual appliance notifications for the provided device name
+  fields:
+    device_name:
+      name: Device name
+      description: The name of the device for which the data should be queried
+      required: true
+      selector:
+        text:
+
+get_profile_notifications:
+  name: Get Profile notifications
+  description: Get the actual profile notifications for all devices for your actual user
+  fields:
+    limit:
+      name: Limit
+      description: The maximum amount of notifications over all devices which shall be returned
+      required: false
+      selector:
+        number:
+          mode: box
+          min: 1
+          max: 50
+
+tap_water:
+  name: Tap water
+  description: Tap water from Grohe Blue Home/Professional
+  fields:
+    device_name:
+      name: Device name
+      description: The name of the device from which you want to tap water
+      required: true
+      selector:
+        text:
+    water_type:
+      name: Water type
+      description: You can choose between [still, medium, carbonated]
+      required: true
+      selector:
+        select:
+          options:
+            - Still
+            - Medium
+            - Carbonated
+    amount:
+      name: Water amount
+      description: The amount of water which shall be taped
+      required: true
+      selector:
+        number:
+          min: 10
+          max: 1500
+          step: 10
+
+set_snooze:
+  name: Set snooze for Sense Guard
+  description: Set the Sense Guard to snooze for the specified time (in minutes) so that a bigger amount of water can be withdrawn and the device doesn't close the valve
+  fields:
+    device_name:
+      name: Device name
+      description: The name of the device from which you want to tap water
+      required: true
+      selector:
+        text:
+    duration:
+      name: Duration
+      description: The duration the device snoozes [in minutes]
+      required: true
+      selector:
+        number:
+          min: 1
+          max: 120
+          step: 1
