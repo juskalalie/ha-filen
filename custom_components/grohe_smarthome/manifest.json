@@ -1,6 +1,6 @@
 {
 	"domain": "grohe_smarthome",
-	"name": "Grohe Smarthome (Sense and Blue)",
+	"name": "Grohe Smarthome for Sense and Blue",
 	"codeowners": ["@Flo-Schilli"],
 	"config_flow": true,
 	"documentation": "https://github.com/Flo-Schilli/ha-grohe_smarthome",
