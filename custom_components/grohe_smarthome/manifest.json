@@ -2,7 +2,8 @@
   "domain": "grohe_smarthome",
   "name": "Grohe Smarthome",
   "codeowners": [
-    "@Flo-Schilli"
+    "@Flo-Schilli",
+    "@koproductions-code"
   ],
   "config_flow": true,
   "documentation": "https://github.com/Flo-Schilli/ha-grohe_smarthome",
