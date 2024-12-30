@@ -5,13 +5,10 @@ get_dashboard:
 get_appliance_data:
   name: Get Appliance data
   description: Get the actual appliance data for the provided device name
+  target:
+    device:
+      integration: grohe_smarthome
   fields:
-    device_name:
-      name: Device name
-      description: The name of the device for which the data should be queried
-      required: true
-      selector:
-        text:
     group_by:
       name: Group by
       description: Defines what time range the data should be grouped by
@@ -29,35 +26,24 @@ get_appliance_data:
 get_appliance_details:
   name: Get Appliance details
   description: Get the actual appliance details for the provided device name
-  fields:
-    device_name:
-      name: Device name
-      description: The name of the device for which the data should be queried
-      required: true
-      selector:
-        text:
+  target:
+    device:
+      integration: grohe_smarthome
 
 get_appliance_command:
   name: Get Appliance command
   description: Get the actual possible appliance commands for the provided device name
-  fields:
-    device_name:
-      name: Device name
-      description: The name of the device for which the data should be queried
-      required: true
-      selector:
-        text:
+  target:
+    device:
+      integration: grohe_smarthome
 
 set_appliance_command:
   name: Set Appliance command
   description: Send a command to the appliance for the provided device name
+  target:
+    device:
+      integration: grohe_smarthome
   fields:
-    device_name:
-      name: Device name
-      description: The name of the device for which the data should be queried
-      required: true
-      selector:
-        text:
     commands:
       name: Commands to send
       description: The commands which shall be send to the device
@@ -68,35 +54,23 @@ set_appliance_command:
 get_appliance_status:
   name: Get Appliance status
   description: Get the actual appliance status for the provided device name
-  fields:
-    device_name:
-      name: Device name
-      description: The name of the device for which the data should be queried
-      required: true
-      selector:
-        text:
+  target:
+    device:
+      integration: grohe_smarthome
 
 get_appliance_pressure_measurement:
   name: Get Appliance pressure measurements
   description: Get the actual appliance pressure measurements for the provided device name
-  fields:
-    device_name:
-      name: Device name
-      description: The name of the device for which the data should be queried
-      required: true
-      selector:
-        text:
+  target:
+    device:
+      integration: grohe_smarthome
 
 get_appliance_notifications:
   name: Get Appliance notifications
   description: Get the actual appliance notifications for the provided device name
-  fields:
-    device_name:
-      name: Device name
-      description: The name of the device for which the data should be queried
-      required: true
-      selector:
-        text:
+  target:
+    device:
+      integration: grohe_smarthome
 
 get_profile_notifications:
   name: Get Profile notifications
@@ -115,13 +89,10 @@ get_profile_notifications:
 tap_water:
   name: Tap water
   description: Tap water from Grohe Blue Home/Professional
+  target:
+    device:
+      integration: grohe_smarthome
   fields:
-    device_name:
-      name: Device name
-      description: The name of the device from which you want to tap water
-      required: true
-      selector:
-        text:
     water_type:
       name: Water type
       description: You can choose between [still, medium, carbonated]
@@ -145,13 +116,10 @@ tap_water:
 set_snooze:
   name: Set snooze for Sense Guard
   description: Set the Sense Guard to snooze for the specified time (in minutes) so that a bigger amount of water can be withdrawn and the device doesn't close the valve
+  target:
+    device:
+      integration: grohe_smarthome
   fields:
-    device_name:
-      name: Device name
-      description: The name of the device from which you want to tap water
-      required: true
-      selector:
-        text:
     duration:
       name: Duration
       description: The duration the device snoozes [in minutes]

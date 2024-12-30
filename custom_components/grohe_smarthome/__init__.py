@@ -6,7 +6,7 @@ from typing import List, Dict
 import voluptuous
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, ServiceCall, ServiceResponse, SupportsResponse
-from homeassistant.helpers import aiohttp_client
+from homeassistant.helpers import aiohttp_client, device_registry
 from custom_components.grohe_smarthome.api.ondus_api import OndusApi
 from custom_components.grohe_smarthome.const import DOMAIN, CONF_USERNAME, CONF_PASSWORD, CONF_PLATFORM
 from custom_components.grohe_smarthome.dto.grohe_device import GroheDevice
@@ -23,6 +23,18 @@ _LOGGER = logging.getLogger(__name__)
 
 def find_device_by_name(devices: List[GroheDevice], name: str) -> GroheDevice:
     return next((device for device in devices if device.name == name), None)
+
+def find_device_by_device_id(
+    hass: HomeAssistant, devices: List[GroheDevice], device_id: str
+) -> GroheDevice:
+    registry = device_registry.async_get(hass)
+    entry = registry.async_get(device_id)
+    grohe_appliance_id = next(iter(entry.identifiers))[1]
+    return next(
+        (device for device in devices if device.appliance_id == grohe_appliance_id),
+        None,
+    )
+
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
     _LOGGER.debug("Unloading Grohe Entry")
@@ -91,7 +103,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     async def handle_get_appliance_data(call: ServiceCall) -> ServiceResponse:
         _LOGGER.debug('Get data for params: %s', call.data)
-        device = find_device_by_name(devices, call.data['device_name'])
+        device = find_device_by_device_id(hass, devices, call.data.get("device_id")[0])
         group_by_str = call.data.get('group_by').lower() if call.data.get('group_by') else None
 
         if device:
@@ -108,7 +120,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     async def handle_get_appliance_details(call: ServiceCall) -> ServiceResponse:
         _LOGGER.debug('Get details for params: %s', call.data)
-        device = find_device_by_name(devices, call.data['device_name'])
+        device = find_device_by_device_id(hass, devices, call.data.get("device_id")[0])
 
         if device:
             return await api.get_appliance_details_raw(device.location_id, device.room_id, device.appliance_id)
@@ -118,7 +130,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     async def handle_get_appliance_command(call: ServiceCall) -> ServiceResponse:
         _LOGGER.debug('Get possible commands for params: %s', call.data)
-        device = find_device_by_name(devices, call.data['device_name'])
+        device = find_device_by_device_id(hass, devices, call.data.get("device_id")[0])
 
         if device:
             data = await api.get_appliance_command_raw(device.location_id, device.room_id, device.appliance_id)
@@ -131,7 +143,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     async def handle_set_appliance_command(call: ServiceCall) -> ServiceResponse:
         _LOGGER.debug('Set commands for params: %s', call.data)
-        device = find_device_by_name(devices, call.data['device_name'])
+        device = find_device_by_device_id(hass, devices, call.data.get("device_id")[0])
         commands = call.data.get('commands')
 
         data_to_send = {'command': commands}
@@ -146,7 +158,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     async def handle_tap_water(call: ServiceCall) -> ServiceResponse:
         _LOGGER.debug('Tap water for params: %s', call.data)
-        device = find_device_by_name(devices, call.data['device_name'])
+        device = find_device_by_device_id(hass, devices, call.data.get("device_id")[0])
         water_type = call.data.get('water_type')
         water_amount = call.data.get('amount')
 
@@ -167,7 +179,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     async def handle_get_appliance_status(call: ServiceCall) -> ServiceResponse:
         _LOGGER.debug('Get status for params: %s', call.data)
-        device = find_device_by_name(devices, call.data['device_name'])
+        device = find_device_by_device_id(hass, devices, call.data.get("device_id")[0])
 
         if device:
             data = await api.get_appliance_status_raw(device.location_id, device.room_id, device.appliance_id)
@@ -181,7 +193,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     async def handle_get_appliance_notifications(call: ServiceCall) -> ServiceResponse:
         _LOGGER.debug('Get notifications for params: %s', call.data)
-        device = find_device_by_name(devices, call.data['device_name'])
+        device = find_device_by_device_id(hass, devices, call.data.get("device_id")[0])
 
         if device:
             data = await api.get_appliance_notifications_raw(device.location_id, device.room_id, device.appliance_id)
@@ -200,7 +212,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     async def handle_get_appliance_pressure_measurement(call: ServiceCall) -> ServiceResponse:
         _LOGGER.debug('Get pressure measurement for params: %s', call.data)
-        device = find_device_by_name(devices, call.data['device_name'])
+        device = find_device_by_device_id(hass, devices, call.data.get("device_id")[0])
 
         if device:
             data = await api.get_appliance_pressure_measurement_raw(device.location_id, device.room_id, device.appliance_id)
@@ -236,7 +248,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     async def handle_set_snooze(call: ServiceCall) -> ServiceResponse:
         _LOGGER.debug('Set snooze for params: %s', call.data)
-        device = find_device_by_name(devices, call.data['device_name'])
+        device = find_device_by_device_id(hass, devices, call.data.get("device_id")[0])
         duration = call.data.get('duration')
 
         if device and (device.type == GroheTypes.GROHE_SENSE_GUARD):
@@ -259,7 +271,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         'get_appliance_data',
         handle_get_appliance_data,
         schema=voluptuous.Schema({
-            voluptuous.Required('device_name'): str,
             voluptuous.Optional('group_by'): str,
         }),
         supports_response=SupportsResponse.ONLY)
@@ -268,45 +279,30 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         DOMAIN,
         'get_appliance_details',
         handle_get_appliance_details,
-        schema=voluptuous.Schema({
-            voluptuous.Required('device_name'): str,
-        }),
         supports_response=SupportsResponse.ONLY)
 
     hass.services.async_register(
         DOMAIN,
         'get_appliance_command',
         handle_get_appliance_command,
-        schema=voluptuous.Schema({
-            voluptuous.Required('device_name'): str,
-        }),
         supports_response=SupportsResponse.ONLY)
 
     hass.services.async_register(
         DOMAIN,
         'get_appliance_status',
         handle_get_appliance_status,
-        schema=voluptuous.Schema({
-            voluptuous.Required('device_name'): str,
-        }),
         supports_response=SupportsResponse.ONLY)
 
     hass.services.async_register(
         DOMAIN,
         'get_appliance_notifications',
         handle_get_appliance_notifications,
-        schema=voluptuous.Schema({
-            voluptuous.Required('device_name'): str,
-        }),
         supports_response=SupportsResponse.ONLY)
 
     hass.services.async_register(
         DOMAIN,
         'get_appliance_pressure_measurement',
         handle_get_appliance_pressure_measurement,
-        schema=voluptuous.Schema({
-            voluptuous.Required('device_name'): str,
-        }),
         supports_response=SupportsResponse.ONLY)
 
     hass.services.async_register(
@@ -314,7 +310,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         'set_appliance_command',
         handle_set_appliance_command,
         schema=voluptuous.Schema({
-            voluptuous.Required('device_name'): str,
             voluptuous.Required('commands'): dict,
         }),
         supports_response=SupportsResponse.ONLY)
@@ -333,7 +328,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         'tap_water',
         handle_tap_water,
         schema=voluptuous.Schema({
-            voluptuous.Required('device_name'): str,
             voluptuous.Required('water_type'): str,
             voluptuous.Required('amount'): int,
         }),
@@ -344,7 +338,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         'set_snooze',
         handle_set_snooze,
         schema=voluptuous.Schema({
-            voluptuous.Required('device_name'): str,
             voluptuous.Optional('duration'): int,
         }),
         supports_response=SupportsResponse.ONLY)
