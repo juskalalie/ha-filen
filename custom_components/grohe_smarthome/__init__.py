@@ -86,6 +86,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     await hass.config_entries.async_forward_entry_setups(entry, CONF_PLATFORM)
 
+    await profile_coordinator.async_config_entry_first_refresh()
+
     ####### OPTIONS - FLOW RELOAD ######################################################################################
     async def update_listener(hass: HomeAssistant, entry: ConfigEntry) -> None:
         _LOGGER.debug("Updating Grohe Sense options")

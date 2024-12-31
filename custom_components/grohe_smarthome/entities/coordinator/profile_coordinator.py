@@ -45,6 +45,9 @@ class ProfileCoordinator(DataUpdateCoordinator, CoordinatorInterface):
         except Exception as e:
             _LOGGER.error("Error updating Profile data: %s", str(e))
 
+    async def _async_setup(self) -> None:
+        await self._async_update_data()
+
     async def update_notification(self, notification_id: str, state: bool) -> None:
         await self._api.update_profile_notification_state(notification_id, state)
 
