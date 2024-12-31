@@ -272,7 +272,7 @@ class OndusApi:
         :rtype: Dict[str, Any]
         """
         await self.__update_invalid_token()
-        response = await self._session.put(url=url, headers={
+        response = await self._session.delete(url=url, headers={
             'Authorization': f'Bearer {self.__tokens.access_token}'
         })
 
@@ -541,7 +541,7 @@ class OndusApi:
         return data
 
     async def disable_snooze(self, location_id: string, room_id: string,
-                            appliance_id: string, duration_in_min: int) -> None:
+                            appliance_id: string) -> None:
         url = f'{self.__api_url}/locations/{location_id}/rooms/{room_id}/appliances/{appliance_id}/snooze'
         data = await self.__delete(url)
         return data

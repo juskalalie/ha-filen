@@ -129,3 +129,11 @@ set_snooze:
           min: 1
           max: 120
           step: 1
+
+
+disable_snooze:
+  name: Disable snooze for Sense Guard
+  description: Disable the snooze for the Sense Guard
+  target:
+    device:
+      integration: grohe_smarthome

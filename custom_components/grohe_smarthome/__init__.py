@@ -4,6 +4,8 @@ from datetime import datetime, timedelta
 from typing import List, Dict
 
 import voluptuous
+from voluptuous import All, Length
+
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, ServiceCall, ServiceResponse, SupportsResponse
 from homeassistant.helpers import aiohttp_client, device_registry
@@ -250,12 +252,29 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     async def handle_set_snooze(call: ServiceCall) -> ServiceResponse:
         _LOGGER.debug('Set snooze for params: %s', call.data)
-        device = find_device_by_device_id(hass, devices, call.data.get("device_id")[0])
+        device = find_device_by_device_id(hass, devices, call.data.get('device_id')[0])
         duration = call.data.get('duration')
 
         if device and (device.type == GroheTypes.GROHE_SENSE_GUARD):
             try:
                 data = await api.set_snooze(device.location_id, device.room_id, device.appliance_id, duration)
+                if data is None:
+                    return {}
+                else:
+                    return data
+            except KeyError as e:
+                return {'error': f'The following error happened: {e}'}
+        else:
+            return {'error': 'Device is not a Grohe Sense Guard device'}
+
+
+    async def handle_disable_snooze(call: ServiceCall) -> ServiceResponse:
+        _LOGGER.debug('Disable snooze for params: %s', call.data)
+        device = find_device_by_device_id(hass, devices, call.data.get("device_id")[0])
+
+        if device and (device.type == GroheTypes.GROHE_SENSE_GUARD):
+            try:
+                data = await api.disable_snooze(device.location_id, device.room_id, device.appliance_id)
                 if data is None:
                     return {}
                 else:
@@ -273,6 +292,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         'get_appliance_data',
         handle_get_appliance_data,
         schema=voluptuous.Schema({
+            voluptuous.Required('device_id'): All(
+                [str],
+                Length(min=1)
+            ),
             voluptuous.Optional('group_by'): str,
         }),
         supports_response=SupportsResponse.ONLY)
@@ -281,30 +304,60 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         DOMAIN,
         'get_appliance_details',
         handle_get_appliance_details,
+        schema=voluptuous.Schema({
+            voluptuous.Required('device_id'): All(
+                [str],
+                Length(min=1)
+            ),
+        }),
         supports_response=SupportsResponse.ONLY)
 
     hass.services.async_register(
         DOMAIN,
         'get_appliance_command',
         handle_get_appliance_command,
+        schema=voluptuous.Schema({
+            voluptuous.Required('device_id'): All(
+                [str],
+                Length(min=1)
+            ),
+        }),
         supports_response=SupportsResponse.ONLY)
 
     hass.services.async_register(
         DOMAIN,
         'get_appliance_status',
         handle_get_appliance_status,
+        schema=voluptuous.Schema({
+            voluptuous.Required('device_id'): All(
+                [str],
+                Length(min=1)
+            ),
+        }),
         supports_response=SupportsResponse.ONLY)
 
     hass.services.async_register(
         DOMAIN,
         'get_appliance_notifications',
         handle_get_appliance_notifications,
+        schema=voluptuous.Schema({
+            voluptuous.Required('device_id'): All(
+                [str],
+                Length(min=1)
+            ),
+        }),
         supports_response=SupportsResponse.ONLY)
 
     hass.services.async_register(
         DOMAIN,
         'get_appliance_pressure_measurement',
         handle_get_appliance_pressure_measurement,
+        schema=voluptuous.Schema({
+            voluptuous.Required('device_id'): All(
+                [str],
+                Length(min=1)
+            ),
+        }),
         supports_response=SupportsResponse.ONLY)
 
     hass.services.async_register(
@@ -312,6 +365,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         'set_appliance_command',
         handle_set_appliance_command,
         schema=voluptuous.Schema({
+            voluptuous.Required('device_id'): All(
+                [str],
+                Length(min=1)
+            ),
             voluptuous.Required('commands'): dict,
         }),
         supports_response=SupportsResponse.ONLY)
@@ -330,6 +387,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         'tap_water',
         handle_tap_water,
         schema=voluptuous.Schema({
+            voluptuous.Required('device_id'): All(
+                [str],
+                Length(min=1)
+            ),
             voluptuous.Required('water_type'): str,
             voluptuous.Required('amount'): int,
         }),
@@ -341,6 +402,22 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         handle_set_snooze,
         schema=voluptuous.Schema({
             voluptuous.Optional('duration'): int,
+            voluptuous.Required('device_id'): All(
+                [str],
+                Length(min=1)
+            ),
+        }),
+        supports_response=SupportsResponse.ONLY)
+
+    hass.services.async_register(
+        DOMAIN,
+        'disable_snooze',
+        handle_disable_snooze,
+        schema=voluptuous.Schema({
+            voluptuous.Required('device_id'): All(
+                [str],
+                Length(min=1)
+            ),
         }),
         supports_response=SupportsResponse.ONLY)
 
