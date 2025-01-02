@@ -10,7 +10,7 @@ from grohe import GroheClient, GroheGroupBy, GroheTypes, GroheTapType
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, ServiceCall, ServiceResponse, SupportsResponse
-from homeassistant.helpers import device_registry
+from homeassistant.helpers import device_registry, httpx_client
 from custom_components.grohe_smarthome.const import DOMAIN, CONF_USERNAME, CONF_PASSWORD, CONF_PLATFORM
 from custom_components.grohe_smarthome.dto.grohe_device import GroheDevice
 from custom_components.grohe_smarthome.entities.config_loader import ConfigLoader
@@ -58,7 +58,7 @@ async def async_setup_entry(ha: HomeAssistant, entry: ConfigEntry) -> bool:
     config = await ha.async_add_executor_job(config_loader.load_config)
 
     # Login to Grohe backend
-    api = GroheClient(entry.data.get('username'), entry.data.get('password'))
+    api = GroheClient(entry.data.get('username'), entry.data.get('password'), httpx_client.get_async_client(ha))
     await api.login()
 
     # Get all devices available
