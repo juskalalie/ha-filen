@@ -9,7 +9,6 @@ from homeassistant.core import callback
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.update_coordinator import CoordinatorEntity, DataUpdateCoordinator
 
-from ..coordinator.sense_coordinator import SenseCoordinator
 from ..helper import Helper
 from ...dto.grohe_device import GroheDevice
 from ...dto.config_dtos import SensorDto, NotificationsDto

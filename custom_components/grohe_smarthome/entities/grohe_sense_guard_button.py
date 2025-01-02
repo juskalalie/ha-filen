@@ -1,16 +1,16 @@
 import logging
 
+from grohe import GroheClient
 from homeassistant.components.button import ButtonEntity
 from homeassistant.helpers.device_registry import DeviceInfo
 
-from custom_components.grohe_smarthome.api.ondus_api import OndusApi
 from custom_components.grohe_smarthome.dto.grohe_device import GroheDevice
 
 _LOGGER = logging.getLogger(__name__)
 
 
 class GroheSenseGuardButton(ButtonEntity):
-    def __init__(self, domain: str, auth_session: OndusApi, device: GroheDevice):
+    def __init__(self, domain: str, auth_session: GroheClient, device: GroheDevice):
         self._auth_session = auth_session
         self._device = device
         self._domain = domain

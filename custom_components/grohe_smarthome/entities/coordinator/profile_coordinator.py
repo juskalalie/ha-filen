@@ -1,21 +1,18 @@
 import logging
 from datetime import timedelta
-from typing import List, Dict
+from typing import Dict
 from datetime import datetime
 
+from grohe import GroheClient
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
-from custom_components.grohe_smarthome.api.ondus_api import OndusApi
-from custom_components.grohe_smarthome.dto.grohe_device import GroheDevice
-from custom_components.grohe_smarthome.dto.ondus_dtos import Notification
 from custom_components.grohe_smarthome.entities.interface.coordinator_interface import CoordinatorInterface
 
 _LOGGER = logging.getLogger(__name__)
 
-
 class ProfileCoordinator(DataUpdateCoordinator, CoordinatorInterface):
-    def __init__(self, hass: HomeAssistant, domain: str, api: OndusApi) -> None:
+    def __init__(self, hass: HomeAssistant, domain: str, api: GroheClient) -> None:
         super().__init__(hass, _LOGGER, name='Grohe', update_interval=timedelta(seconds=900), always_update=True)
         self._api = api
         self._domain = domain
@@ -25,7 +22,7 @@ class ProfileCoordinator(DataUpdateCoordinator, CoordinatorInterface):
         self._data: Dict[str, any] = {}
 
     async def _get_data(self) -> Dict[str, any]:
-        api_data = await self._api.get_profile_notifications_raw(50)
+        api_data = await self._api.get_profile_notifications(50)
 
         data = {'notifications': api_data}
         self._data = data

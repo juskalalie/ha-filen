@@ -1,5 +1,5 @@
 import logging
-from typing import List
+from typing import List, Type
 
 from homeassistant.components.valve import ValveEntityFeature
 from homeassistant.const import UnitOfTemperature, PERCENTAGE, UnitOfVolume, UnitOfVolumeFlowRate, UnitOfPressure, \
@@ -27,7 +27,7 @@ class Helper:
 
     @staticmethod
     def get_valve_features(features: List[str]) -> int:
-        parsed_features: List[ValveEntityFeature] = []
+        parsed_features: List[Type[ValveEntityFeature]] = []
         for feature in features:
             try:
                 parsed = ValveEntityFeature[feature.upper()]

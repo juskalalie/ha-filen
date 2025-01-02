@@ -103,7 +103,7 @@ This can be found by finding the corresponding notification in the Grohe Sense a
 - Turning water off when you're away (and dishwasher, washer, et.c. are not running) and turning it back on when home again.
 - Turning water off when non-Grohe sensors detect water.
 - Passing along notifications from Grohe sense to Slack/Matrix/Amazon (note that there is a polling delay, plus unknown delay between device and Grohe's cloud)
-- Send notification when your alarm is armed away and flowrate is >0 (controlling for the high latency, plus dishwashers, ice makers, et.c.).
+- Send notification when your alarm is armed away and flow rate is >0 (controlling for the high latency, plus dishwashers, ice makers, et.c.).
 
 Graphing water consumption is also nice. Note: The data returned by Grohe's servers is extremely detailed.
 
@@ -142,9 +142,9 @@ At the moment it is not directly listed in HACS (PR is open) and therefore you h
 4. Add a new custom repository:
     - URL: https://github.com/Flo-Schilli/ha-grohe_smarthome
     - Category: Integration
-7. Click "Save" and then click "Install" on the Grohe Sense integration.
-8. Then, restart your HomeAssistant Instance and go to Settings -> Devices & Services -> Add Integration and search for "Grohe Sense".
-9. Enter your Grohe credentials and click on "Submit".
+5. Click "Save" and then click "Install" on the Grohe Sense integration.
+6. Then, restart your HomeAssistant Instance and go to Settings -> Devices & Services -> Add Integration and search for "Grohe Sense".
+7. Enter your Grohe credentials and click on "Submit".
 
 #### Option 2: Manual
 - Clone this repository or download the source code as a zip file and add/merge the `custom_components/` folder with its contents in your configuration directory.
@@ -174,7 +174,7 @@ Breaking changes have happened previously, and can easily happen again.
 I try to always keep the integration updated to their latest API.
 
 The API returns _much_ more detailed data than is exposed via these sensors.
-For withdrawals, it returns an exact start- and endtime for each withdrawal, as well as volume withdrawn.
+For withdrawals, it returns an exact start- and end time for each withdrawal, as well as volume withdrawn.
 It seems to store data since the water meter was installed, so you can extract a lot of historic data (but then polling gets a bit slow).
 I'm not aware of any good way to expose time series data like this in home assistant (suddenly I learn that 2 liters was withdrawn 5 minutes ago, and 5 liters was withdrawn 2 minutes ago).
 If anyone has any good ideas/pointers, that'd be appreciated.

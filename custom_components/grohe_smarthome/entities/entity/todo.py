@@ -1,5 +1,5 @@
 import logging
-from typing import Dict, List
+from typing import List
 
 from benedict import benedict
 from homeassistant.components.todo import TodoListEntity, TodoListEntityFeature, TodoItem, TodoItemStatus
@@ -8,8 +8,7 @@ from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.update_coordinator import CoordinatorEntity, DataUpdateCoordinator
 
 from ..coordinator.profile_coordinator import ProfileCoordinator
-from ..interface.coordinator_interface import CoordinatorInterface
-from ...dto.config_dtos import TodoDto, NotificationDto, NotificationsDto
+from ...dto.config_dtos import TodoDto, NotificationsDto
 from ...dto.grohe_device import GroheDevice
 
 
@@ -17,7 +16,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class Todo(CoordinatorEntity, TodoListEntity):
-    def __init__(self, domain: str, coordinator: CoordinatorInterface, device: GroheDevice, todo: TodoDto,
+    def __init__(self, domain: str, coordinator: DataUpdateCoordinator, device: GroheDevice, todo: TodoDto,
                  notification_config: NotificationsDto):
         super().__init__(coordinator)
 

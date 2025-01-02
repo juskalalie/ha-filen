@@ -1,11 +1,12 @@
 from typing import List, Dict
 import logging
+
+from grohe import GroheClient
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 
-from .api.ondus_api import OndusApi
 from .const import (DOMAIN)
-from .dto.config_dtos import ConfigDto, NotificationDto, NotificationsDto
+from .dto.config_dtos import ConfigDto, NotificationsDto
 from .dto.grohe_device import GroheDevice
 from .entities.entity.todo import Todo
 from .entities.entity_helper import EntityHelper
@@ -18,7 +19,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
     _LOGGER.debug(f'Adding todo entities from config entry {entry}')
 
     data = hass.data[DOMAIN][entry.entry_id]
-    api: OndusApi = data['session']
+    api: GroheClient = data['session']
     devices: List[GroheDevice] = data['devices']
     config: ConfigDto = data['config']
     coordinators: Dict[str, CoordinatorInterface] = data['coordinator']
@@ -27,8 +28,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
 
     entities: List[Todo] = []
     for device in devices:
-        if coordinators.get(api.get_user_claim(), None) is not None:
-            entity = await helper.add_todo_entities(coordinators.get(api.get_user_claim(), None), device,
+        if coordinators.get(api.user_id, None) is not None:
+            entity = await helper.add_todo_entities(coordinators.get(api.user_id, None), device,
                                            notification_config)
             entities.extend(entity)
 

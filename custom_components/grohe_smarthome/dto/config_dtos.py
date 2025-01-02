@@ -27,10 +27,10 @@ class NotificationsDto:
         notify_category = [cat for cat in self.notifications if cat.category == category]
         if len(notify_category) == 1:
             notify_cat = notify_category[0]
-            notify_subcat = [cat for cat in notify_cat.sub_category if cat.id == subcategory]
-            if len(notify_subcat) == 1:
-                subcat_info = notify_subcat[0]
-                return subcat_info.text
+            notify_sub_cat = [cat for cat in notify_cat.sub_category if cat.id == subcategory]
+            if len(notify_sub_cat) == 1:
+                sub_cat_info = notify_sub_cat[0]
+                return sub_cat_info.text
         return f'Unknown Notification {category}/{subcategory}'
 
 

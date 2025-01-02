@@ -1,19 +1,20 @@
 import logging
 from typing import List
 
-from custom_components.grohe_smarthome.api.ondus_api import OndusApi
-from custom_components.grohe_smarthome.dto.ondus_dtos import Appliance
-from custom_components.grohe_smarthome.enum.ondus_types import GroheTypes
+from benedict import benedict
+from grohe import GroheClient
+
+from grohe import GroheTypes
 
 _LOGGER = logging.getLogger(__name__)
 
 
 class GroheDevice:
-    def __init__(self, location_id: int, room_id: int, room_name: str, appliance: Appliance):
+    def __init__(self, location_id: int, room_id: int, room_name: str, appliance: benedict):
         self._location_id = location_id
         self._room_id = room_id
         self._room_name = room_name
-        self.appliance = appliance
+        self._appliance = appliance
 
     @property
     def location_id(self):
@@ -29,32 +30,32 @@ class GroheDevice:
 
     @property
     def appliance_id(self) -> str:
-        return self.appliance.id
+        return self._appliance.get('appliance_id')
 
     @property
     def sw_version(self) -> str:
-        return self.appliance.version
+        return self._appliance.get('version')
 
     @property
     def stripped_sw_version(self) -> tuple[int, ...]:
         try:
-            version = tuple(map(int, self.appliance.version.split('.')[:2]))
+            version = tuple(map(int, self.sw_version.split('.')[:2]))
         except ValueError:
-            _LOGGER.warning(f'SW-Version for {self.appliance.name} cannot be split into two numbers. Value is: "{self.appliance.version}"')
+            _LOGGER.warning(f'SW-Version for {self.name} cannot be split into two numbers. Value is: "{self.sw_version}"')
             version = (0, 0)
         return version
 
     @property
     def name(self) -> str:
-        return self.appliance.name
+        return self._appliance.get('name')
 
     @property
     def device_serial(self) -> str:
-        return self.appliance.serial_number
+        return self._appliance.get('serial_number')
 
     @property
     def type(self) -> GroheTypes:
-        return GroheTypes(self.appliance.type)
+        return GroheTypes(self._appliance.get('type'))
 
     @property
     def device_name(self) -> str:
@@ -71,46 +72,50 @@ class GroheDevice:
             return 'Unknown'
 
     @staticmethod
-    async def get_devices(ondus_api: OndusApi) -> List['GroheDevice']:
+    async def get_devices(api: GroheClient) -> List['GroheDevice']:
         """
-        Fetches all devices associated with the provided OndusApi instance.
+        Fetches all devices associated with the provided GroheClient instance.
 
-        :param ondus_api: An instance of the OndusApi class.
-        :type ondus_api: OndusApi
+        :param api: An instance of the GroheClient class.
+        :type api: GroheClient
         :return: A list of GroheDevice objects representing the discovered devices.
         :rtype: List[GroheDevice]
         """
         _LOGGER.debug(f'Getting all available Grohe devices')
         devices: List[GroheDevice] = []
 
-        locations = await ondus_api.get_locations()
+        dashboard = benedict(await api.get_dashboard())
+
+        locations = dashboard.get('locations')
 
         for location in locations:
-            rooms = await ondus_api.get_rooms(location.id)
+            rooms = location.get('rooms')
             for room in rooms:
-                appliances = await ondus_api.get_appliances(location.id, room.id)
+                appliances = room.get('appliances')
+
                 for appliance in appliances:
+                    location_id = location.get('id')
+                    room_id = room.get('id')
+                    appliance_id = appliance.get('appliance_id')
+
                     _LOGGER.debug(
-                        f'Found in location {location.id} and room {room.id} the following appliance: {appliance.id} '
-                        f'from type {appliance.type} with name {appliance.name}'
+                        f'Found in location {location_id} and room {room_id} the following appliance: {appliance_id} '
+                        f'from type {appliance.get('type')} with name {appliance.get('name')}'
                     )
 
                     try:
-                        device: GroheDevice = GroheDevice(location.id, room.id, room.name, appliance)
+                        device: GroheDevice = GroheDevice(location_id, room_id, room.get('name'), appliance)
                         if not device.is_valid_device_type():
-                            app_details = await ondus_api.get_appliance_details_raw(
-                                location.id, room.id, appliance.id)
-
                             _LOGGER.warning(f'Could not parse the following appliance as a GroheDevice. Please file '
                                             f'a new issue with your Grohe Devices and this information.'
-                                            f'Appliance: {appliance}, Appliance details: {app_details}')
+                                            f'Appliance: {appliance.get('name')}, Appliance details: {appliance}')
                         else:
                             devices.append(device)
                     except ValueError as e:
-                        _LOGGER.warning(f'Could not parse the following appliance as a GroheDevice: {appliance}')
+                        _LOGGER.warning(f'Could not parse the following appliance as a GroheDevice: {appliance}. Error: {e}')
 
         return devices
 
     def is_valid_device_type(self) -> bool:
-        is_valid = any(self.appliance.type == item.value for item in GroheTypes)
+        is_valid = any(self._appliance.get('type') == item.value for item in GroheTypes)
         return is_valid
