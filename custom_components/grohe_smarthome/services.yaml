@@ -109,9 +109,9 @@ tap_water:
       required: true
       selector:
         number:
-          min: 10
-          max: 1500
-          step: 10
+          min: 50
+          max: 1000
+          step: 50
 
 set_snooze:
   name: Set snooze for Sense Guard
