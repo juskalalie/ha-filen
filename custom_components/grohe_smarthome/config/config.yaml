@@ -184,19 +184,19 @@ devices:
         - name: 'Count cleaning'
           keypath: 'details.data_latest.measurement.cleaning_count'
           category: 'Diagnostic'
-          enabled: false
+          enabled: true
         - name: 'Count filter change'
           keypath: 'details.data_latest.measurement.filter_change_count'
           category: 'Diagnostic'
-          enabled: false
+          enabled: true
         - name: 'Count Power cut'
           keypath: 'details.data_latest.measurement.power_cut_count'
           category: 'Diagnostic'
-          enabled: false
+          enabled: true
         - name: 'Count pump'
           keypath: 'details.data_latest.measurement.pump_count'
           category: 'Diagnostic'
-          enabled: false
+          enabled: true
         - name: 'Time since restart'
           keypath: 'details.data_latest.measurement.time_since_restart'
           device_class: 'Duration'
@@ -207,16 +207,16 @@ devices:
           device_class: 'Duration'
           unit: 'Minutes'
           category: 'Diagnostic'
-          enabled: false
+          enabled: true
 
         - name: 'Update available'
           keypath: 'status.update_available'
           category: 'Diagnostic'
-          enabled: false
+          enabled: true
         - name: 'Online'
           keypath: 'status.connection'
           category: 'Diagnostic'
-          enabled: false
+          enabled: true
 
     - type: GroheBlueProf
       todos:
@@ -292,19 +292,19 @@ devices:
         - name: 'Count cleaning'
           keypath: 'details.data_latest.measurement.cleaning_count'
           category: 'Diagnostic'
-          enabled: false
+          enabled: true
         - name: 'Count filter change'
           keypath: 'details.data_latest.measurement.filter_change_count'
           category: 'Diagnostic'
-          enabled: false
+          enabled: true
         - name: 'Count Power cut'
           keypath: 'details.data_latest.measurement.power_cut_count'
           category: 'Diagnostic'
-          enabled: false
+          enabled: true
         - name: 'Count pump'
           keypath: 'details.data_latest.measurement.pump_count'
           category: 'Diagnostic'
-          enabled: false
+          enabled: true
         - name: 'Time since restart'
           keypath: 'details.data_latest.measurement.time_since_restart'
           device_class: 'Duration'
@@ -315,14 +315,14 @@ devices:
           device_class: 'Duration'
           unit: 'Minutes'
           category: 'Diagnostic'
-          enabled: false
+          enabled: true
 
         - name: 'Update available'
           keypath: 'status.update_available'
           category: 'Diagnostic'
-          enabled: false
+          enabled: true
         - name: 'Online'
           keypath: 'status.connection'
           category: 'Diagnostic'
-          enabled: false
+          enabled: true
 
