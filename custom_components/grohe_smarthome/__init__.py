@@ -58,7 +58,10 @@ async def async_setup_entry(ha: HomeAssistant, entry: ConfigEntry) -> bool:
     config = await ha.async_add_executor_job(config_loader.load_config)
 
     # Login to Grohe backend
-    api = GroheClient(entry.data.get('username'), entry.data.get('password'), httpx_client.get_async_client(ha))
+    httpx_client_ha = httpx_client.get_async_client(ha)
+    httpx_client_ha.cookies.clear()
+    
+    api = GroheClient(entry.data.get('username'), entry.data.get('password'), httpx_client_ha)
     await api.login()
 
     # Get all devices available
