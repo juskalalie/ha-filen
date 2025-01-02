@@ -3,19 +3,19 @@ from datetime import timedelta
 from typing import List, Dict
 from datetime import datetime
 
+from grohe import GroheClient
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
-from custom_components.grohe_smarthome.api.ondus_api import OndusApi
 from custom_components.grohe_smarthome.dto.grohe_device import GroheDevice
-from custom_components.grohe_smarthome.dto.ondus_dtos import Notification
+from custom_components.grohe_smarthome.dto.notification_dto import Notification
 from custom_components.grohe_smarthome.entities.interface.coordinator_interface import CoordinatorInterface
 
 _LOGGER = logging.getLogger(__name__)
 
 
 class SenseCoordinator(DataUpdateCoordinator, CoordinatorInterface):
-    def __init__(self, hass: HomeAssistant, domain: str, device: GroheDevice, api: OndusApi, polling: int = 300) -> None:
+    def __init__(self, hass: HomeAssistant, domain: str, device: GroheDevice, api: GroheClient, polling: int = 300) -> None:
         super().__init__(hass, _LOGGER, name='Grohe Sense', update_interval=timedelta(seconds=polling), always_update=True)
         self._api = api
         self._domain = domain
@@ -25,7 +25,7 @@ class SenseCoordinator(DataUpdateCoordinator, CoordinatorInterface):
         self._notifications: List[Notification] = []
 
     async def _get_data(self) -> Dict[str, any]:
-        api_data = await self._api.get_appliance_details_raw(
+        api_data = await self._api.get_appliance_details(
             self._device.location_id,
             self._device.room_id,
             self._device.appliance_id)

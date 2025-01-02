@@ -5,15 +5,13 @@ from typing import Dict
 from benedict import benedict
 from homeassistant.components.valve import ValveEntity, ValveDeviceClass, ValveEntityFeature
 from homeassistant.const import STATE_UNKNOWN
-from homeassistant.core import callback
 from homeassistant.helpers.device_registry import DeviceInfo
-from homeassistant.helpers.update_coordinator import CoordinatorEntity, DataUpdateCoordinator
+from homeassistant.helpers.update_coordinator import  DataUpdateCoordinator
 from homeassistant.util import Throttle
 
 from custom_components.grohe_smarthome.dto.config_dtos import ValveDto
 from custom_components.grohe_smarthome.dto.grohe_device import GroheDevice
 
-from custom_components.grohe_smarthome.entities.helper import Helper
 from custom_components.grohe_smarthome.entities.interface.coordinator_valve_interface import CoordinatorValveInterface
 
 _LOGGER = logging.getLogger(__name__)
@@ -22,8 +20,7 @@ VALVE_UPDATE_DELAY = timedelta(minutes=1)
 
 
 class Valve(ValveEntity):
-    def __init__(self, domain: str, coordinator: DataUpdateCoordinator, device: GroheDevice, valve: ValveDto,
-                 initial_value: Dict[str, any] = None):
+    def __init__(self, domain: str, coordinator: DataUpdateCoordinator, device: GroheDevice, valve: ValveDto):
         self._device = device
         self._domain = domain
         self._valve = valve
