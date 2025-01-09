@@ -53,6 +53,7 @@ class SensorDto:
     enabled: Optional[bool] = True
     special_type: Optional[ConfigSpecialType] = None
     min_version: Optional[str] = None
+    enum: Optional[str] = None
 
 @dataclass_json
 @dataclass

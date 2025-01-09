@@ -177,6 +177,10 @@ devices:
           keypath: 'details.data_latest.measurement.remaining_filter'
           device_class: 'Battery'
           unit: 'Percentage'
+        - name: 'Filter type'
+          keypath: 'details.params.filter_type'
+          device_class: 'Enum'
+          enum: 'GroheBlueFilterType'
 
         - name: 'Remaining CO2 total'
           keypath: 'details.data_latest.measurement.remaining_co2_liters'
