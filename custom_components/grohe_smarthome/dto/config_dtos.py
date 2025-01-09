@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from enum import Enum
 from typing import List, Optional
 from dataclasses_json import dataclass_json
 
@@ -35,6 +36,11 @@ class NotificationsDto:
 
 
 #### CONFIG.YAML #######################################################################################################
+class ConfigSpecialType(Enum):
+    ACCUMULATED_WATER = 'Accumulated Water'
+    NOTIFICATION = 'Notification'
+    DURATION_AS_TIMESTAMP = 'Duration as Timestamp'
+
 @dataclass_json
 @dataclass
 class SensorDto:
@@ -45,7 +51,7 @@ class SensorDto:
     state_class: Optional[str] = None
     unit: Optional[str] = None
     enabled: Optional[bool] = True
-    special_type: Optional[str] = None
+    special_type: Optional[ConfigSpecialType] = None
     min_version: Optional[str] = None
 
 @dataclass_json

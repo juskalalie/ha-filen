@@ -9,6 +9,18 @@ get_appliance_data:
     device:
       integration: grohe_smarthome
   fields:
+    date_from:
+      name: Date from
+      description: Defines from which date on the data shall be queried
+      required: false
+      selector:
+        date:
+    date_to:
+      name: Date to
+      description: Defines till which date the data shall be queried
+      required: false
+      selector:
+        date:
     group_by:
       name: Group by
       description: Defines what time range the data should be grouped by

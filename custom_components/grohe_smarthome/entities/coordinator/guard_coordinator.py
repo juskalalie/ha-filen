@@ -3,7 +3,9 @@ from datetime import timedelta
 from typing import List, Dict
 from datetime import datetime
 
+from benedict import benedict
 from grohe import GroheClient
+from grohe.enum.grohe_enum import GroheGroupBy
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
@@ -21,9 +23,29 @@ class GuardCoordinator(DataUpdateCoordinator, CoordinatorInterface, CoordinatorV
         self._api = api
         self._domain = domain
         self._device = device
+        self._total_value = 0
+        self._total_value_update_day: datetime | None = None
         self._timezone = datetime.now().astimezone().tzinfo
         self._last_update = datetime.now().astimezone().replace(tzinfo=self._timezone)
         self._notifications: List[Notification] = []
+
+    async def _get_total_value(self, date_from: datetime, date_to: datetime, group_by: GroheGroupBy) -> float:
+        _LOGGER.debug(f'Getting total values for Grohe Sense Guard with appliance id {self._device.appliance_id}')
+        data_in = await self._api.get_appliance_data(
+                        self._device.location_id,
+                        self._device.room_id,
+                        self._device.appliance_id,
+                        date_from,
+                        date_to,
+                        group_by,
+                        True)
+
+        data = benedict(data_in)
+        withdrawals = data.get('data.withdrawals')
+        if withdrawals is not None and isinstance(withdrawals, list):
+            return sum([val.get('waterconsumption') for val in withdrawals])
+        else:
+            return 0.0
 
     async def _get_data(self) -> Dict[str, any]:
         api_data = await self._api.get_appliance_details(
@@ -37,6 +59,20 @@ class GuardCoordinator(DataUpdateCoordinator, CoordinatorInterface, CoordinatorV
             self._device.appliance_id
         )
 
+        if (self._total_value_update_day is not None and datetime.now().astimezone().day - self._total_value_update_day.day >= 1) or (self._total_value_update_day is None):
+            if self._total_value_update_day is None:
+                date_from = datetime.now().astimezone() - timedelta(days=2000)
+                date_to = datetime.now().astimezone() - timedelta(days=1)
+                group_by = GroheGroupBy.YEAR
+            else:
+                date_from = self._total_value_update_day
+                date_to = self._total_value_update_day
+                group_by = GroheGroupBy.DAY
+
+            self._total_value = await self._get_total_value(date_from, date_to, group_by)
+            self._total_value_update_day = datetime.now().astimezone().replace(tzinfo=self._timezone)
+
+
         try:
             status = { val['type']: val['value'] for val in api_data['status'] }
         except AttributeError as e:
@@ -44,7 +80,7 @@ class GuardCoordinator(DataUpdateCoordinator, CoordinatorInterface, CoordinatorV
             status = None
 
 
-        data = {'details': api_data, 'status': status, 'pressure': pressure}
+        data = {'details': api_data, 'status': status, 'pressure': pressure, 'total_water_consumption': self._total_value}
 
         return data
 

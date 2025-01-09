@@ -3,6 +3,7 @@ import os.path
 from datetime import datetime, timedelta
 from typing import List, Dict
 
+from homeassistant.helpers.storage import Store
 import voluptuous
 from voluptuous import All, Length
 
@@ -23,9 +24,6 @@ from custom_components.grohe_smarthome.entities.interface.coordinator_interface 
 
 
 _LOGGER = logging.getLogger(__name__)
-
-def find_device_by_name(devices: List[GroheDevice], name: str) -> GroheDevice:
-    return next((device for device in devices if device.name == name), None)
 
 def find_device_by_device_id(
     hass: HomeAssistant, devices: List[GroheDevice], device_id: str
@@ -114,6 +112,8 @@ async def async_setup_entry(ha: HomeAssistant, entry: ConfigEntry) -> bool:
         _LOGGER.debug('Get data for params: %s', call.data)
         device = find_device_by_device_id(ha, devices, call.data.get("device_id")[0])
         group_by_str = call.data.get('group_by').lower() if call.data.get('group_by') else None
+        date_from_in = call.data.get('date_from') if call.data.get('date_from') else None
+        date_to_in = call.data.get('date_to') if call.data.get('date_to') else None
 
         if device:
             if group_by_str is None:
@@ -121,9 +121,19 @@ async def async_setup_entry(ha: HomeAssistant, entry: ConfigEntry) -> bool:
             else:
                 group_by = GroheGroupBy(group_by_str)
 
+            if date_from_in is None:
+                date_from = datetime.now().astimezone() - timedelta(hours=1)
+            else:
+                date_from = datetime.strptime(date_from_in, "%Y-%m-%d")
+
+            if date_to_in is None:
+                date_to = datetime.now().astimezone()
+            else:
+                date_to = datetime.strptime(date_to_in, "%Y-%m-%d")
+
             return await api.get_appliance_data(device.location_id, device.room_id, device.appliance_id,
-                                                datetime.now().astimezone() - timedelta(hours=1),
-                                                None, group_by, False)
+                                                date_from,
+                                                date_to, group_by, False)
         else:
             return {}
 
@@ -194,6 +204,8 @@ async def async_setup_entry(ha: HomeAssistant, entry: ConfigEntry) -> bool:
             data = await api.get_appliance_status(device.location_id, device.room_id, device.appliance_id)
             if data is None:
                 return {}
+            elif isinstance(data, list) and len(data) > 0:
+                return { 'status': data }
             else:
                 return data
 
@@ -302,6 +314,8 @@ async def async_setup_entry(ha: HomeAssistant, entry: ConfigEntry) -> bool:
                 Length(min=1)
             ),
             voluptuous.Optional('group_by'): str,
+            voluptuous.Optional('date_from'): str,
+            voluptuous.Optional('date_to'): str,
         }),
         supports_response=SupportsResponse.ONLY)
 
