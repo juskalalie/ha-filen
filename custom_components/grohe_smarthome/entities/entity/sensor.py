@@ -11,7 +11,7 @@ from homeassistant.helpers.update_coordinator import CoordinatorEntity, DataUpda
 
 from ..helper import Helper
 from ...dto.grohe_device import GroheDevice
-from ...dto.config_dtos import SensorDto, NotificationsDto
+from ...dto.config_dtos import SensorDto, NotificationsDto, ConfigSpecialType
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -74,16 +74,18 @@ class Sensor(CoordinatorEntity, SensorEntity):
                 _LOGGER.error(f'Device: {self._device.name} ({self._device.appliance_id}) with sensor: {self._sensor.name} has no value on keypath: {self._sensor.keypath}')
 
             if self._sensor.device_class is not None and self._sensor.device_class == 'Timestamp' and value is not None:
-                if self._sensor.special_type is not None and self._sensor.special_type.upper() == 'DURATION AS TIMESTAMP':
+                if self._sensor.special_type is not None and self._sensor.special_type == ConfigSpecialType.DURATION_AS_TIMESTAMP:
                     value = datetime.now().astimezone() - timedelta(minutes=value)
                 else:
                     value = datetime.fromisoformat(value)
 
             if self._sensor.special_type is not None:
-                if self._sensor.special_type.upper() == 'NOTIFICATION' and value is not None and isinstance(value, dict):
+                if self._sensor.special_type == ConfigSpecialType.NOTIFICATION and value is not None and isinstance(value, dict):
                     value = self._notification_config.get_notification(value.get('category'), value.get('type'))
-                elif self._sensor.special_type.upper() == 'NOTIFICATION' and value is None:
+                elif self._sensor.special_type == ConfigSpecialType.NOTIFICATION and value is None:
                     value = 'No actual notification'
+                elif self._sensor.special_type == ConfigSpecialType.ACCUMULATED_WATER and value is not None:
+                    value = value + data.get('total_water_consumption')
 
             return value
 

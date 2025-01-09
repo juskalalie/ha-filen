@@ -3,9 +3,9 @@ import os.path
 from datetime import datetime, timedelta
 from typing import List, Dict
 
-import homeassistant.helpers.storage
+from homeassistant.helpers.storage import Store
 import voluptuous
-from voluptuous import All, Length, Datetime
+from voluptuous import All, Length
 
 from grohe import GroheClient, GroheGroupBy, GroheTypes, GroheTapType
 
@@ -24,9 +24,6 @@ from custom_components.grohe_smarthome.entities.interface.coordinator_interface 
 
 
 _LOGGER = logging.getLogger(__name__)
-
-def find_device_by_name(devices: List[GroheDevice], name: str) -> GroheDevice:
-    return next((device for device in devices if device.name == name), None)
 
 def find_device_by_device_id(
     hass: HomeAssistant, devices: List[GroheDevice], device_id: str
@@ -116,6 +113,7 @@ async def async_setup_entry(ha: HomeAssistant, entry: ConfigEntry) -> bool:
         device = find_device_by_device_id(ha, devices, call.data.get("device_id")[0])
         group_by_str = call.data.get('group_by').lower() if call.data.get('group_by') else None
         date_from_in = call.data.get('date_from') if call.data.get('date_from') else None
+        date_to_in = call.data.get('date_to') if call.data.get('date_to') else None
 
         if device:
             if group_by_str is None:
@@ -128,9 +126,14 @@ async def async_setup_entry(ha: HomeAssistant, entry: ConfigEntry) -> bool:
             else:
                 date_from = datetime.strptime(date_from_in, "%Y-%m-%d")
 
+            if date_to_in is None:
+                date_to = datetime.now().astimezone()
+            else:
+                date_to = datetime.strptime(date_to_in, "%Y-%m-%d")
+
             return await api.get_appliance_data(device.location_id, device.room_id, device.appliance_id,
                                                 date_from,
-                                                None, group_by, False)
+                                                date_to, group_by, False)
         else:
             return {}
 
@@ -312,6 +315,7 @@ async def async_setup_entry(ha: HomeAssistant, entry: ConfigEntry) -> bool:
             ),
             voluptuous.Optional('group_by'): str,
             voluptuous.Optional('date_from'): str,
+            voluptuous.Optional('date_to'): str,
         }),
         supports_response=SupportsResponse.ONLY)
 
