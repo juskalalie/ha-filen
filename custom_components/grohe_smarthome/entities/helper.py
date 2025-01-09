@@ -1,9 +1,12 @@
 import logging
+from enum import Enum
 from typing import List, Type
 
 from homeassistant.components.valve import ValveEntityFeature
 from homeassistant.const import UnitOfTemperature, PERCENTAGE, UnitOfVolume, UnitOfVolumeFlowRate, UnitOfPressure, \
     UnitOfTime
+
+from custom_components.grohe_smarthome.enums.grohe_enums import GroheBlueFilterType
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -40,3 +43,8 @@ class Helper:
             bit_features |= parsed_feature.value
 
         return bit_features
+
+    @staticmethod
+    def get_config_enum(enum_name: str) -> Type[Enum]:
+        if enum_name == 'GroheBlueFilterType':
+            return GroheBlueFilterType

@@ -36,6 +36,9 @@ class Sensor(CoordinatorEntity, SensorEntity):
         if self._sensor.device_class is not None:
             self._attr_device_class = SensorDeviceClass(self._sensor.device_class.lower())
 
+            if self._attr_device_class == SensorDeviceClass.ENUM and self._sensor.enum is not None:
+                self._attr_options = [e.name for e in Helper.get_config_enum(self._sensor.enum)]
+
         if self._sensor.unit is not None:
             self._attr_native_unit_of_measurement = Helper.get_ha_units(self._sensor.unit)
 
@@ -78,6 +81,10 @@ class Sensor(CoordinatorEntity, SensorEntity):
                     value = datetime.now().astimezone() - timedelta(minutes=value)
                 else:
                     value = datetime.fromisoformat(value)
+
+            if self._sensor.device_class is not None and self._sensor.device_class == 'Enum' and value is not None:
+                if self._sensor.enum is not None:
+                    value = Helper.get_config_enum(self._sensor.enum)(value).name
 
             if self._sensor.special_type is not None:
                 if self._sensor.special_type == ConfigSpecialType.NOTIFICATION and value is not None and isinstance(value, dict):
