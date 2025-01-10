@@ -66,6 +66,8 @@ class GroheDevice:
             return 'Sense Guard'
         elif dev_name == GroheTypes.GROHE_SENSE_PLUS:
             return 'Sense Plus'
+        elif dev_name == GroheTypes.GROHE_BLUE_HOME:
+            return 'Blue Home'
         elif dev_name == GroheTypes.GROHE_BLUE_PROFESSIONAL:
             return 'Blue Professional'
         else:
