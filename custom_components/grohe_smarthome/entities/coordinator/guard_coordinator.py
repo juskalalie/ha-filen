@@ -69,7 +69,7 @@ class GuardCoordinator(DataUpdateCoordinator, CoordinatorInterface, CoordinatorV
                 date_to = self._total_value_update_day
                 group_by = GroheGroupBy.DAY
 
-            self._total_value = await self._get_total_value(date_from, date_to, group_by)
+            self._total_value = self._total_value + await self._get_total_value(date_from, date_to, group_by)
             self._total_value_update_day = datetime.now().astimezone().replace(tzinfo=self._timezone)
 
 
