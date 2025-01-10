@@ -35,6 +35,7 @@ The sensors I implemented only give the latest measurement returned from the ser
 ### Grohe Sense Guard 
 When you install this, you get the following sensors for each Sense Guard:
  - **Consumption today** (as total increasing)
+ - **Total water consumption**
  - **Actual flow rate**
  - **Actual pressure** 
  - **Average daily consumption**
@@ -75,6 +76,7 @@ When you install this, you get the following sensors for each Grohe Blue Home an
 - **Remaining Filter**
 - **Remaining CO2 total**
 - **Remaining Filter total**
+- **Filter type**
 - **Latest notification**
 
 And the following diagnostic sensors:
