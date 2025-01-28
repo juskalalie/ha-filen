@@ -15,9 +15,9 @@ The authors of this integration are not affiliated with Grohe or the Grohe app i
 Use at your own risk!
 
 ## Getting started
-If you're new, take a look at the Installation Guide here: [Getting Started](https://Flo-Schilli/ha-grohe_smarthome/wiki/Getting-Started)
+If you're new, take a look at the Installation Guide here: [Getting Started](https://github.com/Flo-Schilli/ha-grohe_smarthome/wiki/Getting-Started)
 
-Other documentation for available actions, device sensors, notifications, etc. can be found in the [wiki](https://Flo-Schilli/ha-grohe_smarthome/wiki)
+Other documentation for available actions, device sensors, notifications, etc. can be found in the [wiki](https://github.com/Flo-Schilli/ha-grohe_smarthome/wiki)
 
 ## Remarks on the "API"
 I have not seen any documentation from Grohe on the API this integration is using, so likely it was only intended for their app.
