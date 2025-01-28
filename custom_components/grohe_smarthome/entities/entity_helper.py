@@ -6,6 +6,7 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
 from custom_components.grohe_smarthome.dto.config_dtos import ConfigDto, NotificationsDto, SensorDto
 from custom_components.grohe_smarthome.dto.grohe_device import GroheDevice
+from custom_components.grohe_smarthome.entities.entity.button import Button
 from custom_components.grohe_smarthome.entities.entity.sensor import Sensor
 from custom_components.grohe_smarthome.entities.entity.todo import Todo
 from custom_components.grohe_smarthome.entities.entity.valve import Valve
@@ -87,6 +88,21 @@ class EntityHelper:
                     _LOGGER.debug(f'Adding valve {valve.name} for device {device.name}')
                     if isinstance(coordinator, DataUpdateCoordinator):
                         entities.append(Valve(self._domain, coordinator, device, valve))
+
+        return entities
+
+    async def add_button_entities(self, coordinator: CoordinatorInterface, device: GroheDevice) -> List[Button]:
+
+        config_name = EntityHelper.get_config_name_by_device_type(device)
+
+        entities: List[Button] = []
+        if config_name:
+            if (self._config.get_device_config(config_name) is not None
+                    and self._config.get_device_config(config_name).buttons is not None):
+                for button in self._config.get_device_config(config_name).buttons:
+                    _LOGGER.debug(f'Adding button {button.name} for device {device.name}')
+                    if isinstance(coordinator, DataUpdateCoordinator):
+                        entities.append(Button(self._domain, coordinator, device, button))
 
         return entities
 

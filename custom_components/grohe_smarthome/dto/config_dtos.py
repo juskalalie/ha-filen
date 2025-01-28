@@ -71,11 +71,20 @@ class ValveDto:
 
 @dataclass_json
 @dataclass
+class ButtonDto:
+    name: str
+    keypath: str
+    device_class: Optional[str] = None
+    features: Optional[List[str]] = None
+
+@dataclass_json
+@dataclass
 class DeviceDto:
     type: str
     sensors: List[SensorDto]
     todos: Optional[List[TodoDto]] = None
     valves: Optional[List[ValveDto]] = None
+    buttons: Optional[List[ButtonDto]] = None
 
 @dataclass_json
 @dataclass
