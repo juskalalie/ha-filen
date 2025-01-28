@@ -4,7 +4,7 @@ from typing import Dict
 
 from benedict import benedict
 from homeassistant.components.valve import ValveEntity, ValveDeviceClass, ValveEntityFeature
-from homeassistant.const import STATE_UNKNOWN
+from homeassistant.const import STATE_UNKNOWN, STATE_UNAVAILABLE
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.update_coordinator import  DataUpdateCoordinator
 from homeassistant.util import Throttle
@@ -32,6 +32,9 @@ class Valve(ValveEntity):
 
         self._attr_name = f'{self._device.name} {self._valve.name}'
         self._attr_has_entity_name = False
+
+        # Set the integration unavailable until first update was successful.
+        self._attr_available = False
 
         self._attr_supported_features = ValveEntityFeature.OPEN | ValveEntityFeature.CLOSE
 
@@ -77,7 +80,12 @@ class Valve(ValveEntity):
     async def async_update(self):
         if isinstance(self._coordinator, CoordinatorValveInterface):
             data = await self._coordinator.get_valve_value()
-            self._is_closed = not self._get_value(data)
+            valve_value = self._get_value(data)
+            if valve_value is not None:
+                self._attr_available = True
+                self._is_closed = not valve_value
+            else:
+                self._attr_available = False
 
     async def _set_state(self, state):
         if isinstance(self._coordinator, CoordinatorValveInterface) and self._valve.keypath is not None:
