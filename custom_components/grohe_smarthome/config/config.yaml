@@ -126,6 +126,15 @@ devices:
       todos:
         - name: 'Notifications'
           keypath: 'notifications.notifications'
+      buttons:
+        - name: 'Reset CO2'
+          commands:
+            - keypath: 'command.co2_status_reset'
+              value: true
+        - name: 'Reset Filter'
+          commands:
+            - keypath: 'command.filter_status_reset'
+              value: true
       sensors:
         - name: 'Latest notification'
           keypath: 'details.notifications[0]'
@@ -238,6 +247,15 @@ devices:
       todos:
         - name: 'Notifications'
           keypath: 'notifications.notifications'
+      buttons:
+        - name: 'Reset CO2'
+          commands:
+            - keypath: 'command.co2_status_reset'
+              value: true
+        - name: 'Reset Filter'
+          commands:
+            - keypath: 'command.filter_status_reset'
+              value: true
       sensors:
         - name: 'Latest notification'
           keypath: 'details.notifications[0]'
