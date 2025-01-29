@@ -32,6 +32,12 @@ devices:
           features:
             - open
             - close
+      buttons:
+        - name: 'Pressure Measurement'
+          min_version: '3.06'
+          commands:
+          - keypath: 'command.measure_now'
+            value: true
       sensors:
         - name: 'Temperature'
           keypath: 'details.data_latest.measurement.temperature_guard'

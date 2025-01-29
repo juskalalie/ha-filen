@@ -71,12 +71,17 @@ class ValveDto:
 
 @dataclass_json
 @dataclass
+class ButtonCommands:
+    keypath: str
+    value: bool | str | int
+
+@dataclass_json
+@dataclass
 class ButtonDto:
     name: str
-    keypath: str
-    device_class: Optional[str] = None
-    features: Optional[List[str]] = None
-
+    commands: List[ButtonCommands]
+    min_version: Optional[str] = None
+    
 @dataclass_json
 @dataclass
 class DeviceDto:

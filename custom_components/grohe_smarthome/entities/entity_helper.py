@@ -4,7 +4,7 @@ from typing import List
 from grohe import GroheTypes
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
-from custom_components.grohe_smarthome.dto.config_dtos import ConfigDto, NotificationsDto, SensorDto
+from custom_components.grohe_smarthome.dto.config_dtos import ConfigDto, NotificationsDto, SensorDto, ButtonDto
 from custom_components.grohe_smarthome.dto.grohe_device import GroheDevice
 from custom_components.grohe_smarthome.entities.entity.button import Button
 from custom_components.grohe_smarthome.entities.entity.sensor import Sensor
@@ -21,10 +21,10 @@ class EntityHelper:
         self._domain = domain
 
     @staticmethod
-    def is_valid_version(device: GroheDevice, sensor: SensorDto):
-        if sensor.min_version is not None:
-            sensor_version = tuple(map(int, sensor.min_version.split('.')[:2]))
-            return device.stripped_sw_version >= sensor_version
+    def is_valid_version(device: GroheDevice, entity: SensorDto | ButtonDto):
+        if entity.min_version is not None:
+            entity_version = tuple(map(int, entity.min_version.split('.')[:2]))
+            return device.stripped_sw_version >= entity_version
         else:
             return True
 
@@ -100,9 +100,10 @@ class EntityHelper:
             if (self._config.get_device_config(config_name) is not None
                     and self._config.get_device_config(config_name).buttons is not None):
                 for button in self._config.get_device_config(config_name).buttons:
-                    _LOGGER.debug(f'Adding button {button.name} for device {device.name}')
-                    if isinstance(coordinator, DataUpdateCoordinator):
-                        entities.append(Button(self._domain, coordinator, device, button))
+                    if EntityHelper.is_valid_version(device, button):
+                        _LOGGER.debug(f'Adding button {button.name} for device {device.name}')
+                        if isinstance(coordinator, DataUpdateCoordinator):
+                            entities.append(Button(self._domain, coordinator, device, button))
 
         return entities
 
