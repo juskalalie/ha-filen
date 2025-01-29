@@ -11,13 +11,14 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
 from custom_components.grohe_smarthome.dto.grohe_device import GroheDevice
 from custom_components.grohe_smarthome.dto.notification_dto import Notification
+from custom_components.grohe_smarthome.entities.interface.coordinator_button_interface import CoordinatorButtonInterface
 from custom_components.grohe_smarthome.entities.interface.coordinator_interface import CoordinatorInterface
 from custom_components.grohe_smarthome.entities.interface.coordinator_valve_interface import CoordinatorValveInterface
 
 _LOGGER = logging.getLogger(__name__)
 
 
-class GuardCoordinator(DataUpdateCoordinator, CoordinatorInterface, CoordinatorValveInterface):
+class GuardCoordinator(DataUpdateCoordinator, CoordinatorInterface, CoordinatorValveInterface, CoordinatorButtonInterface):
     def __init__(self, hass: HomeAssistant, domain: str, device: GroheDevice, api: GroheClient, polling: int = 300) -> None:
         super().__init__(hass, _LOGGER, name='Grohe Sense', update_interval=timedelta(seconds=polling), always_update=True)
         self._api = api
@@ -100,6 +101,15 @@ class GuardCoordinator(DataUpdateCoordinator, CoordinatorInterface, CoordinatorV
             self._device.room_id,
             self._device.appliance_id,
             self._device.type, data_to_set)
+
+        return api_data
+
+    async def send_command(self, data_to_send: Dict[str, any]) -> Dict[str, any]:
+        api_data = await self._api.set_appliance_command(
+            self._device.location_id,
+            self._device.room_id,
+            self._device.appliance_id,
+            self._device.type, data_to_send)
 
         return api_data
 

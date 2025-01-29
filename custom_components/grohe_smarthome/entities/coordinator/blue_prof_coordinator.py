@@ -10,11 +10,12 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
 from custom_components.grohe_smarthome.dto.grohe_device import GroheDevice
 from custom_components.grohe_smarthome.dto.notification_dto import Notification
+from custom_components.grohe_smarthome.entities.interface.coordinator_button_interface import CoordinatorButtonInterface
 from custom_components.grohe_smarthome.entities.interface.coordinator_interface import CoordinatorInterface
 
 _LOGGER = logging.getLogger(__name__)
 
-class BlueProfCoordinator(DataUpdateCoordinator, CoordinatorInterface):
+class BlueProfCoordinator(DataUpdateCoordinator, CoordinatorInterface, CoordinatorButtonInterface):
     def __init__(self, hass: HomeAssistant, domain: str, device: GroheDevice, api: GroheClient, polling: int = 300) -> None:
         super().__init__(hass, _LOGGER, name='Grohe Sense', update_interval=timedelta(seconds=polling), always_update=True)
         self._api = api
@@ -64,3 +65,12 @@ class BlueProfCoordinator(DataUpdateCoordinator, CoordinatorInterface):
     def set_polling_interval(self, polling: int) -> None:
         self.update_interval = timedelta(seconds=polling)
         self.async_update_listeners()
+
+    async def send_command(self, data_to_send: Dict[str, any]) -> Dict[str, any]:
+        api_data = await self._api.set_appliance_command(
+            self._device.location_id,
+            self._device.room_id,
+            self._device.appliance_id,
+            self._device.type, data_to_send)
+
+        return api_data

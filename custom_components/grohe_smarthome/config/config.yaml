@@ -32,6 +32,12 @@ devices:
           features:
             - open
             - close
+      buttons:
+        - name: 'Pressure Measurement'
+          min_version: '3.06'
+          commands:
+          - keypath: 'command.measure_now'
+            value: true
       sensors:
         - name: 'Temperature'
           keypath: 'details.data_latest.measurement.temperature_guard'
@@ -120,6 +126,15 @@ devices:
       todos:
         - name: 'Notifications'
           keypath: 'notifications.notifications'
+      buttons:
+        - name: 'Reset CO2'
+          commands:
+            - keypath: 'command.co2_status_reset'
+              value: true
+        - name: 'Reset Filter'
+          commands:
+            - keypath: 'command.filter_status_reset'
+              value: true
       sensors:
         - name: 'Latest notification'
           keypath: 'details.notifications[0]'
@@ -232,6 +247,15 @@ devices:
       todos:
         - name: 'Notifications'
           keypath: 'notifications.notifications'
+      buttons:
+        - name: 'Reset CO2'
+          commands:
+            - keypath: 'command.co2_status_reset'
+              value: true
+        - name: 'Reset Filter'
+          commands:
+            - keypath: 'command.filter_status_reset'
+              value: true
       sensors:
         - name: 'Latest notification'
           keypath: 'details.notifications[0]'
