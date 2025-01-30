@@ -1,6 +1,7 @@
 # Home Assistant - Grohe Smarthome (Sense and Blue)
 
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg?style=for-the-badge)](https://github.com/custom-components/hacs)
+[![Integration Usage](https://img.shields.io/badge/dynamic/json?color=41BDF5&style=for-the-badge&logo=home-assistant&label=usage&suffix=%20installs&cacheSeconds=15600&url=https://analytics.home-assistant.io/custom_integrations.json&query=$.grohe_smarthome.total)](https://analytics.home-assistant.io/)
 
 Grohe Smarthome (Sense and Blue) integration for Home Assistant
  
