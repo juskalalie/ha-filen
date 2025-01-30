@@ -110,18 +110,22 @@ devices:
           keypath: 'details.snooze_status'
           enabled: false
 
-        - name: 'Update available'
-          keypath: 'status.update_available'
-          category: 'Diagnostic'
-          enabled: false
         - name: 'Wifi quality'
           keypath: 'status.wifi_quality'
           category: 'Diagnostic'
           enabled: false
+      binary_sensors:
+        - name: 'Update available'
+          keypath: 'status.update_available'
+          device_class: 'Update'
+          category: 'Diagnostic'
+          enabled: true
         - name: 'Online'
           keypath: 'status.connection'
           category: 'Diagnostic'
-          enabled: false
+          device_class: 'Connectivity'
+          enabled: true
+
     - type: GroheBlueHome
       todos:
         - name: 'Notifications'
@@ -234,14 +238,18 @@ devices:
           category: 'Diagnostic'
           enabled: true
 
+      binary_sensors:
         - name: 'Update available'
           keypath: 'status.update_available'
+          device_class: 'Update'
           category: 'Diagnostic'
           enabled: true
         - name: 'Online'
           keypath: 'status.connection'
           category: 'Diagnostic'
+          device_class: 'Connectivity'
           enabled: true
+
 
     - type: GroheBlueProf
       todos:
@@ -350,13 +358,15 @@ devices:
           unit: 'Minutes'
           category: 'Diagnostic'
           enabled: true
-
+      binary_sensors:
         - name: 'Update available'
           keypath: 'status.update_available'
+          device_class: 'Update'
           category: 'Diagnostic'
           enabled: true
         - name: 'Online'
           keypath: 'status.connection'
           category: 'Diagnostic'
+          device_class: 'Connectivity'
           enabled: true
 

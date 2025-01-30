@@ -57,6 +57,16 @@ class SensorDto:
 
 @dataclass_json
 @dataclass
+class BinarySensorDto:
+    name: str
+    keypath: str
+    device_class: Optional[str] = None
+    category: Optional[str] = None
+    enabled: Optional[bool] = True
+    min_version: Optional[str] = None
+
+@dataclass_json
+@dataclass
 class TodoDto:
     name: str
     keypath: str
@@ -90,6 +100,7 @@ class DeviceDto:
     todos: Optional[List[TodoDto]] = None
     valves: Optional[List[ValveDto]] = None
     buttons: Optional[List[ButtonDto]] = None
+    binary_sensors: Optional[List[BinarySensorDto]] = None
 
 @dataclass_json
 @dataclass
