@@ -6,6 +6,7 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
 from custom_components.grohe_smarthome.dto.config_dtos import ConfigDto, NotificationsDto, SensorDto, ButtonDto
 from custom_components.grohe_smarthome.dto.grohe_device import GroheDevice
+from custom_components.grohe_smarthome.entities.entity.binary_sensor import BinarySensor
 from custom_components.grohe_smarthome.entities.entity.button import Button
 from custom_components.grohe_smarthome.entities.entity.sensor import Sensor
 from custom_components.grohe_smarthome.entities.entity.todo import Todo
@@ -104,6 +105,23 @@ class EntityHelper:
                         _LOGGER.debug(f'Adding button {button.name} for device {device.name}')
                         if isinstance(coordinator, DataUpdateCoordinator):
                             entities.append(Button(self._domain, coordinator, device, button))
+
+        return entities
+
+    async def add_binary_sensor_entities(self, coordinator: CoordinatorInterface, device: GroheDevice) -> List[BinarySensor]:
+
+        config_name = EntityHelper.get_config_name_by_device_type(device)
+
+        entities: List[BinarySensor] = []
+        if config_name:
+            if (self._config.get_device_config(config_name) is not None
+                    and self._config.get_device_config(config_name).binary_sensors is not None):
+                initial_value = await coordinator.get_initial_value()
+                for binary_sensor in self._config.get_device_config(config_name).binary_sensors:
+                    if EntityHelper.is_valid_version(device, binary_sensor):
+                        _LOGGER.debug(f'Adding binary sensor {binary_sensor.name} for device {device.name}')
+                        if isinstance(coordinator, DataUpdateCoordinator):
+                            entities.append(BinarySensor(self._domain, coordinator, device, binary_sensor, initial_value))
 
         return entities
 
