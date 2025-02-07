@@ -88,6 +88,7 @@ class Valve(ValveEntity):
                 self._attr_available = False
 
             _LOGGER.debug(f'Updating valve value for {self._device.name}: {valve_value} (isAvailable: {self._attr_available}, isClosed: {self._is_closed})')
+            _LOGGER.debug(f'Full command value for {self._device.name} and getting the valve value: {data})')
 
     async def _set_state(self, state):
         if isinstance(self._coordinator, CoordinatorValveInterface) and self._valve.keypath is not None:
