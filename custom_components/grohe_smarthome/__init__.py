@@ -3,6 +3,7 @@ import os.path
 from datetime import datetime, timedelta
 from typing import List, Dict
 
+import httpx
 from homeassistant.helpers.storage import Store
 import voluptuous
 from voluptuous import All, Length
@@ -58,6 +59,10 @@ async def async_setup_entry(ha: HomeAssistant, entry: ConfigEntry) -> bool:
     # Login to Grohe backend
     httpx_client_ha = httpx_client.get_async_client(ha)
     httpx_client_ha.cookies.clear()
+    request_timeout = entry.data.get('request_timeout', 10)
+    connect_timeout = entry.data.get('connect_timeout', 5)
+
+    httpx_client_ha.timeout = httpx.Timeout(request_timeout, connect=connect_timeout)
     
     api = GroheClient(entry.data.get('username'), entry.data.get('password'), httpx_client_ha)
     await api.login()
@@ -96,6 +101,12 @@ async def async_setup_entry(ha: HomeAssistant, entry: ConfigEntry) -> bool:
     ####### OPTIONS - FLOW RELOAD ######################################################################################
     async def update_listener(hass: HomeAssistant, config_entry: ConfigEntry) -> None:
         _LOGGER.debug("Updating Grohe Sense options")
+        polling = config_entry.data.get('polling', 300)
+        request_timeout = config_entry.data.get('request_timeout', 10)
+        connect_timeout = config_entry.data.get('connect_timeout', 5)
+
+        httpx_client_ha.timeout = httpx.Timeout(request_timeout, connect=connect_timeout)
+
         for coordinator in hass.data[DOMAIN]['coordinator'].values():
             coordinator.set_polling_interval(polling)
             await coordinator.async_request_refresh()
