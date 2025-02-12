@@ -86,35 +86,47 @@ class GroheDevice:
         _LOGGER.debug(f'Getting all available Grohe devices')
         devices: List[GroheDevice] = []
 
-        dashboard = benedict(await api.get_dashboard())
+        data = await api.get_dashboard()
 
-        locations = dashboard.get('locations')
+        if data is not None:
+            dashboard = benedict(data)
 
-        for location in locations:
-            rooms = location.get('rooms')
-            for room in rooms:
-                appliances = room.get('appliances')
+            locations = dashboard.get('locations')
 
-                for appliance in appliances:
-                    location_id = location.get('id')
-                    room_id = room.get('id')
-                    appliance_id = appliance.get('appliance_id')
+            if locations is not None:
+                for location in locations:
+                    rooms = location.get('rooms')
+                    if rooms is not None:
+                        for room in rooms:
+                            appliances = room.get('appliances')
 
-                    _LOGGER.debug(
-                        f'Found in location {location_id} and room {room_id} the following appliance: {appliance_id} '
-                        f'from type {appliance.get('type')} with name {appliance.get('name')}'
-                    )
+                            if appliances is not None:
+                                for appliance in appliances:
+                                    location_id = location.get('id')
+                                    room_id = room.get('id')
+                                    appliance_id = appliance.get('appliance_id')
 
-                    try:
-                        device: GroheDevice = GroheDevice(location_id, room_id, room.get('name'), appliance)
-                        if not device.is_valid_device_type():
-                            _LOGGER.warning(f'Could not parse the following appliance as a GroheDevice. Please file '
-                                            f'a new issue with your Grohe Devices and this information.'
-                                            f'Appliance: {appliance.get('name')}, Appliance details: {appliance}')
-                        else:
-                            devices.append(device)
-                    except ValueError as e:
-                        _LOGGER.warning(f'Could not parse the following appliance as a GroheDevice: {appliance}. Error: {e}')
+                                    _LOGGER.debug(
+                                        f'Found in location {location_id} and room {room_id} the following appliance: {appliance_id} '
+                                        f'from type {appliance.get('type')} with name {appliance.get('name')}'
+                                    )
+
+                                    try:
+                                        device: GroheDevice = GroheDevice(location_id, room_id, room.get('name'), appliance)
+                                        if not device.is_valid_device_type():
+                                            _LOGGER.warning(f'Could not parse the following appliance as a GroheDevice. Please file '
+                                                            f'a new issue with your Grohe Devices and this information.'
+                                                            f'Appliance: {appliance.get('name')}, Appliance details: {appliance}')
+                                        else:
+                                            devices.append(device)
+                                    except ValueError as e:
+                                        _LOGGER.warning(f'Could not parse the following appliance as a GroheDevice: {appliance}. Error: {e}')
+                            else:
+                                _LOGGER.error(f'Could not find any appliances assigned to this room')
+                    else:
+                        _LOGGER.error(f'Could not find any rooms assigned to this location')
+            else:
+                _LOGGER.error(f'Could not find any locations assigned to this account')
 
         return devices
 
