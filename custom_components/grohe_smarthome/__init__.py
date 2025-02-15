@@ -107,9 +107,10 @@ async def async_setup_entry(ha: HomeAssistant, entry: ConfigEntry) -> bool:
 
         httpx_client_ha.timeout = httpx.Timeout(request_timeout, connect=connect_timeout)
 
-        for coordinator in hass.data[DOMAIN]['coordinator'].values():
-            coordinator.set_polling_interval(polling)
-            await coordinator.async_request_refresh()
+        for entity in hass.data[DOMAIN].values():
+            for coordinator in entity["coordinator"].values():
+                coordinator.set_polling_interval(polling)
+                await coordinator.async_request_refresh()
 
     entry.async_on_unload(entry.add_update_listener(update_listener))
 
