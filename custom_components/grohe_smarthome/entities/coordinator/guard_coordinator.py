@@ -31,21 +31,30 @@ class GuardCoordinator(DataUpdateCoordinator, CoordinatorInterface, CoordinatorV
         self._notifications: List[Notification] = []
 
     async def _get_total_value(self, date_from: datetime, date_to: datetime, group_by: GroheGroupBy) -> float:
-        _LOGGER.debug(f'Getting total values for Grohe Sense Guard with appliance id {self._device.appliance_id}')
-        data_in = await self._api.get_appliance_data(
-                        self._device.location_id,
-                        self._device.room_id,
-                        self._device.appliance_id,
-                        date_from,
-                        date_to,
-                        group_by,
-                        True)
+        try:
+            _LOGGER.debug(f'Getting total values for Grohe Sense Guard with appliance id {self._device.appliance_id}')
+            data_in = await self._api.get_appliance_data(
+                            self._device.location_id,
+                            self._device.room_id,
+                            self._device.appliance_id,
+                            date_from,
+                            date_to,
+                            group_by,
+                            True)
 
-        data = benedict(data_in)
-        withdrawals = data.get('data.withdrawals')
-        if withdrawals is not None and isinstance(withdrawals, list):
-            return sum([val.get('waterconsumption') for val in withdrawals])
-        else:
+            data = benedict(data_in)
+            _LOGGER.debug(f'Got total values for Grohe Sense Guard for appliance with name {self._device.name}: {data}')
+
+            withdrawals = data.get('data.withdrawals')
+            if withdrawals is not None and isinstance(withdrawals, list):
+                # Handle None values in waterconsumption
+                return sum([val.get('waterconsumption', 0) for val in withdrawals])
+
+            else:
+                return 0.0
+
+        except Exception as e:
+            _LOGGER.error(f"Failed to get total values: {e}")
             return 0.0
 
     async def _get_data(self) -> Dict[str, any]:
