@@ -1,9 +1,9 @@
-# Home Assistant - Grohe Smarthome (Sense and Blue)
+# Home Assistant - Filen.io cloud storage
 
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg?style=for-the-badge)](https://github.com/custom-components/hacs)
 [![Integration Usage](https://img.shields.io/badge/dynamic/json?color=41BDF5&style=for-the-badge&logo=home-assistant&label=usage&suffix=%20installs&cacheSeconds=15600&url=https://analytics.home-assistant.io/custom_integrations.json&query=$.grohe_smarthome.total)](https://analytics.home-assistant.io/)
 
-Grohe Smarthome (Sense and Blue) integration for Home Assistant
+Filen.io cloud storage integration for Home Assistant
  
 This is an integration for all the Grohe Smarthome devices into Home Assistant. Namely, these are:
  - **Grohe Sense** (small leak sensor)
