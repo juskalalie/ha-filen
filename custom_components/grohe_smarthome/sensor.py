@@ -1,33 +1,40 @@
-from typing import List, Dict
 import logging
-from homeassistant.config_entries import ConfigEntry
-from homeassistant.core import HomeAssistant
-
-from .const import (DOMAIN)
-from .dto.config_dtos import ConfigDto, NotificationsDto
-from .dto.grohe_device import GroheDevice
-from .entities.entity.sensor import Sensor
-from .entities.entity_helper import EntityHelper
-from .entities.interface.coordinator_interface import CoordinatorInterface
+import aiohttp
+from homeassistant.helpers.entity import Entity
 
 _LOGGER = logging.getLogger(__name__)
 
+API_URL = "https://api.filen.io/v1/user"
 
-async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities):
-    _LOGGER.debug(f'Adding sensor entities from config entry {entry}')
+async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
+    """Set up Filen.io sensor."""
+    async_add_entities([FilenStorageSensor(hass)], True)
 
-    data = hass.data[DOMAIN][entry.entry_id]
-    devices: List[GroheDevice] = data['devices']
-    config: ConfigDto = data['config']
-    coordinators: Dict[str, CoordinatorInterface] = data['coordinator']
-    notification_config: NotificationsDto = data['notifications']
-    helper: EntityHelper = EntityHelper(config, DOMAIN)
+class FilenStorageSensor(Entity):
+    """Representation of Filen.io storage usage."""
 
-    entities: List[Sensor] = []
-    for device in devices:
-        coordinator = coordinators.get(device.appliance_id, None)
-        if coordinator is not None:
-            entities.extend(await helper.add_sensor_entities(coordinator, device, notification_config))
+    def __init__(self, hass):
+        """Initialize the sensor."""
+        self._hass = hass
+        self._state = None
 
-    if entities:
-        async_add_entities(entities)
+    async def async_update(self):
+        """Fetch the latest storage usage."""
+        session = aiohttp.ClientSession()
+        async with session.get(f"{API_URL}/storage") as response:
+            if response.status == 200:
+                data = await response.json()
+                self._state = data.get("usedStorage", "Unknown")
+            else:
+                _LOGGER.error("Failed to fetch Filen.io storage info")
+        await session.close()
+
+    @property
+    def name(self):
+        """Return the name of the sensor."""
+        return "Filen.io Storage"
+
+    @property
+    def state(self):
+        """Return the state of the sensor."""
+        return self._state
