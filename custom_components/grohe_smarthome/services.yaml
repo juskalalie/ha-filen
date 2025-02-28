@@ -4,3 +4,13 @@ upload_file:
     file_path:
       description: "Path to the file to upload"
       example: "/config/upload.txt"
+
+download_file:
+  description: "Download a file from Filen.io"
+  fields:
+    file_id:
+      description: "ID of the file to download"
+      example: "abc123xyz"
+    save_path:
+      description: "Local path to save the downloaded file"
+      example: "/config/downloaded.txt"
