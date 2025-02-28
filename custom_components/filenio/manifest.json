@@ -1,6 +1,7 @@
 {
   "domain": "filenio",
   "name": "Filen.io",
+  "integration_type": "hub",
   "codeowners": ["@juskalalie"],
   "config_flow": true,
   "documentation": "https://github.com/juskalalie/ha-filenio",
