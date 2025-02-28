@@ -1,5 +1,5 @@
-filen_io:
+filenio:
   email: "your_email@example.com"
   password: "your_password"
 sensor:
-  - platform: filen_io
+  - platform: filenio
