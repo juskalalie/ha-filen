@@ -11,7 +11,7 @@ async def async_setup(hass: HomeAssistant, config: dict):
     hass.data.setdefault(DOMAIN, {})
     return True
 
-async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
+async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up Filen.io from a config entry."""
     hass.data[DOMAIN][entry.entry_id] = entry.data
     hass.async_create_task(
