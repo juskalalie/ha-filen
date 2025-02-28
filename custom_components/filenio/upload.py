@@ -20,6 +20,6 @@ async def async_setup(hass: HomeAssistant, config: dict):
             else:
                 _LOGGER.error("Failed to upload file")
 
-        hass.services.async_register("filen_io", "upload_file", handle_upload)
+        hass.services.async_register("filenio", "upload_file", handle_upload)
 
     return True
