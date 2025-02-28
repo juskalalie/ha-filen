@@ -22,6 +22,6 @@ async def async_setup(hass: HomeAssistant, config: dict):
             else:
                 _LOGGER.error("Failed to download file")
 
-        hass.services.async_register("filen_io", "download_file", handle_download)
+        hass.services.async_register("filenio", "download_file", handle_download)
 
     return True
