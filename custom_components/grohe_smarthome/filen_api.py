@@ -65,6 +65,26 @@ class FilenClient:
         async with self.session.post(f"{API_BASE}/folders/delete", json=payload, headers=headers) as resp:
             return await resp.json()
 
+    async def move_file(self, file_id, destination_folder_id):
+        """Move a file to another folder."""
+        headers = {"Authorization": self.token}
+        payload = {
+            "file_id": file_id,
+            "destination_folder_id": destination_folder_id
+        }
+        async with self.session.post(f"{API_BASE}/files/move", json=payload, headers=headers) as resp:
+            return await resp.json()
+
+    async def move_folder(self, folder_id, destination_folder_id):
+        """Move a folder into another folder."""
+        headers = {"Authorization": self.token}
+        payload = {
+            "folder_id": folder_id,
+            "destination_folder_id": destination_folder_id
+        }
+        async with self.session.post(f"{API_BASE}/folders/move", json=payload, headers=headers) as resp:
+            return await resp.json()
+            
     async def close(self):
         """Close the session."""
         await self.session.close()
