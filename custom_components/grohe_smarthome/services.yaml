@@ -14,3 +14,23 @@ download_file:
     save_path:
       description: "Local path to save the downloaded file"
       example: "/config/downloaded.txt"
+
+create_folder:
+  description: "Create a folder in Filen.io"
+  fields:
+    folder_name:
+      description: "Name of the new folder"
+      example: "My Folder"
+    parent_folder_id:
+      description: "Parent folder ID (optional, default: root)"
+      example: "abc123"
+
+list_folders:
+  description: "List all folders in Filen.io"
+
+delete_folder:
+  description: "Delete a folder from Filen.io"
+  fields:
+    folder_id:
+      description: "ID of the folder to delete"
+      example: "xyz789"
