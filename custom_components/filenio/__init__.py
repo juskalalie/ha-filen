@@ -1,7 +1,7 @@
 import asyncio
 import logging
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.core import HomeAssistant
+from homeassistant.core import HomeAssistant, ServiceCall, ServiceResponse, SupportsResponse, HomeAssistantError
 
 DOMAIN = "filenio"
 _LOGGER = logging.getLogger(__name__)
