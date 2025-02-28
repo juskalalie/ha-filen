@@ -1,6 +1,5 @@
 import aiohttp
 import hashlib
-import json
 import base64
 import os
 from Crypto.Cipher import AES
@@ -41,14 +40,4 @@ class FilenClient:
             data = f.read()
 
         cipher = AES.new(key, AES.MODE_CBC, iv)
-        encrypted_data = cipher.encrypt(pad(data, AES.block_size))
-
-        encrypted_file = base64.b64encode(iv + encrypted_data).decode()
-
-        headers = {"Authorization": self.token}
-        async with self.session.post(f"{API_BASE}/upload", json={"file": encrypted_file, "name": file_name}, headers=headers) as resp:
-            return await resp.json()
-
-    async def close(self):
-        """Close the session."""
-        await self.session.close()
+        encrypted_data
