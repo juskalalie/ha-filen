@@ -34,3 +34,23 @@ delete_folder:
     folder_id:
       description: "ID of the folder to delete"
       example: "xyz789"
+
+move_file:
+  description: "Move a file to a different folder"
+  fields:
+    file_id:
+      description: "ID of the file to move"
+      example: "file123"
+    destination_folder_id:
+      description: "ID of the folder to move the file into"
+      example: "folder456"
+
+move_folder:
+  description: "Move a folder into another folder"
+  fields:
+    folder_id:
+      description: "ID of the folder to move"
+      example: "folder789"
+    destination_folder_id:
+      description: "ID of the destination folder"
+      example: "folder456"
