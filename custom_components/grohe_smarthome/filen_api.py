@@ -41,3 +41,30 @@ class FilenClient:
 
         cipher = AES.new(key, AES.MODE_CBC, iv)
         encrypted_data
+
+    async def create_folder(self, folder_name, parent_folder_id=None):
+        """Create a new folder in Filen.io."""
+        headers = {"Authorization": self.token}
+        payload = {
+            "name": folder_name,
+            "parent": parent_folder_id or "root"
+        }
+        async with self.session.post(f"{API_BASE}/folders/create", json=payload, headers=headers) as resp:
+            return await resp.json()
+
+    async def list_folders(self):
+        """Retrieve a list of folders in Filen.io."""
+        headers = {"Authorization": self.token}
+        async with self.session.get(f"{API_BASE}/folders/list", headers=headers) as resp:
+            return await resp.json()
+
+    async def delete_folder(self, folder_id):
+        """Delete a folder from Filen.io."""
+        headers = {"Authorization": self.token}
+        payload = {"id": folder_id}
+        async with self.session.post(f"{API_BASE}/folders/delete", json=payload, headers=headers) as resp:
+            return await resp.json()
+
+    async def close(self):
+        """Close the session."""
+        await self.session.close()
