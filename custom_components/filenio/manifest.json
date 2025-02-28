@@ -1,9 +1,7 @@
 {
-  "domain": "filen.io",
+  "domain": "filenio",
   "name": "Filen.io",
-  "codeowners": [
-    "@juskalalie"
-  ],
+  "codeowners": ["@juskalalie"],
   "config_flow": true,
   "documentation": "https://github.com/juskalalie/ha-filenio",
   "iot_class": "cloud_polling",
