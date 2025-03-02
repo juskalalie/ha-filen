@@ -151,7 +151,7 @@ class FilenApi:
         self.auth_token = None
         self.master_key = None
         self.session = aiohttp.ClientSession()
-        self.api_base_url = "https://api.filen.io"
+        self.api_base_url = "https://gateway.filen.io/v3/auth/info"
 
     async def __aenter__(self):
         return self
