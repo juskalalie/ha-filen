@@ -1,10 +1,10 @@
 {
   "domain": "filen",
   "name": "Filen.io",
-  "config_flow": false,
+  "config_flow": true,
   "documentation": "https://github.com/juskalalie/ha-filen",
   "issue_tracker": "https://github.com/juskalalie/ha-filen/issues",
-  "requirements": [],
+  "requirements": ["pycryptodome>=3.15.0"],
   "ssdp": [],
   "zeroconf": [],
   "homekit": {},
