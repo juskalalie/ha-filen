@@ -1,6 +1,0 @@
-upload_file:
-  description: "Upload a file to Filen.io"
-  fields:
-    file_path:
-      description: "Path to the file to upload"
-      example: "/config/upload.txt"
