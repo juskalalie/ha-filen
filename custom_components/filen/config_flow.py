@@ -35,9 +35,11 @@ async def validate_input(hass: HomeAssistant, data):
             email=data[CONF_EMAIL],
             password=data[CONF_PASSWORD],
         )
+        _LOGGER.info(client)
         
         await client.authenticate()
         user_info = await client.get_user_info()
+        _LOGGER.info(user_info)
         
         return {"title": f"Filen.io ({user_info['email']})"}
     except Exception as e:
