@@ -109,12 +109,14 @@ class FilenClient:
         # Step 1: Get authentication info
         auth_info = await self._get_auth_info()
         self.auth_info = auth_info
+        _LOGGER.info("get auth")
         
         # Step 2: Calculate password hash
         password_hash = self._calculate_password_hash(
             self.password, 
             auth_info["salt"]
         )
+        _LOGGER.info("pass hash")
         
         # Step 3: Login
         login_data = {
@@ -123,6 +125,7 @@ class FilenClient:
             "twoFactorCode": "",  # Leave empty if 2FA is not enabled
             "authVersion": 2
         }
+        _LOGGER.info("login data")
         
         async with self.session.post(f"{API_BASE_URL}/v3/login", json=login_data) as response:
             if response.status != 200:
