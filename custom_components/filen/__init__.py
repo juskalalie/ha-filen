@@ -125,7 +125,7 @@ class FilenClient:
             "twoFactorCode": "",  # Leave empty if 2FA is not enabled
             "authVersion": 2
         }
-        _LOGGER.info("login_data")
+        _LOGGER.info(login_data)
         
         async with self.session.post(f"{API_BASE_URL}/v3/login", json=login_data) as response:
             if response.status != 200:
