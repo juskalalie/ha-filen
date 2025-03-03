@@ -22,7 +22,7 @@ import async_timeout
 _LOGGER = logging.getLogger(__name__)
 
 DOMAIN = "filen"
-API_BASE_URL = "https://api.filen.io"
+API_BASE_URL = "https://gateway.filen.io"
 
 # Config schema
 CONFIG_SCHEMA = vol.Schema(
