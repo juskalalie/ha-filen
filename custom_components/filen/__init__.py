@@ -122,7 +122,7 @@ class FilenClient:
         login_data = {
             "email": self.email,
             "password": password_hash,
-            # "twoFactorCode": "",  # Leave empty if 2FA is not enabled
+            "twoFactorCode": "XXXXXX",  # Leave empty if 2FA is not enabled
             "authVersion": 2
         }
         _LOGGER.info(login_data)
