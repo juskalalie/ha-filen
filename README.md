@@ -1,24 +1,32 @@
-# Home Assistant - Filen.io cloud storage
+# Filen for Home Assistant
 
-[![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg?style=for-the-badge)](https://github.com/custom-components/hacs)
-[![Integration Usage](https://img.shields.io/badge/dynamic/json?color=41BDF5&style=for-the-badge&logo=home-assistant&label=usage&suffix=%20installs&cacheSeconds=15600&url=https://analytics.home-assistant.io/custom_integrations.json&query=$.filenio.total)](https://analytics.home-assistant.io/)
+A small HACS custom integration that exposes Filen account and storage information as Home Assistant sensors.
 
-Filen.io cloud storage integration for Home Assistant
- 
-This is an integration to allow connections to cloud storage service filen.io
+## Sensors
 
-## Disclaimer
-The authors of this integration are not affiliated with filen.io in any way. The project depends on the undocumented and unofficial filen.io API. If filen.io decides to change the API in any way, this could break the integration. Even tough the integration was tested on several devices without problems, the authors are not liable for any potential issues, malfunctions or damages arising from using this integration. 
-Use at your own risk!
+The integration creates these sensors for one Filen account:
 
-## Getting started
-If you're new, take a look at the Installation Guide here: [Getting Started](https://github.com/Flo-Schilli/ha-grohe_smarthome/wiki/Getting-Started)
+- Storage used
+- Storage total
+- Storage used percentage
 
-Other documentation for available actions, device sensors, notifications, etc. can be found in the [wiki](https://github.com/Flo-Schilli/ha-grohe_smarthome/wiki)
+Each sensor also exposes account attributes when Filen returns them, including email, account ID, premium status, base folder UUID, avatar URL, display name, nickname, and plan names.
 
-## Remarks on the "API"
-tbi
+## Installation with HACS
 
-## Credits
-Thanks to:
- - [gkreitz](https://github.com/gkreitz/homeassistant-grohe_sense) for the initial implementation of the Grohe Sense
+1. Add this repository to HACS as a custom integration repository.
+2. Install the integration from HACS.
+3. Restart Home Assistant.
+4. Go to Settings -> Devices & services -> Add integration -> Filen.
+5. Enter your Filen email, password, and optional two-factor code.
+
+## Notes
+
+This integration uses Filen's public web API endpoints used by the official SDK for account metadata:
+
+- `/v3/auth/info`
+- `/v3/login`
+- `/v3/user/info`
+- `/v3/user/account`
+
+It supports Filen auth version 2 and version 3 password derivation. Version 3 requires `argon2-cffi`, which Home Assistant installs from the manifest requirements.

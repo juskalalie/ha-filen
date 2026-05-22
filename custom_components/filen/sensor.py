@@ -1,62 +1,104 @@
-"""
-Sensor platform for Filen.io integration.
-Displays storage usage information from Filen.io.
-"""
-import logging
-from datetime import timedelta
-import async_timeout
+"""Sensor platform for Filen account and storage information."""
 
+from __future__ import annotations
+
+from dataclasses import dataclass
+import logging
+from typing import Any, Callable
+
+import async_timeout
 from homeassistant.components.sensor import (
-    SensorEntity,
     SensorDeviceClass,
+    SensorEntity,
+    SensorEntityDescription,
     SensorStateClass,
 )
-from homeassistant.const import UnitOfInformation, UnitOfDataRate
+from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import PERCENTAGE, UnitOfInformation
+from homeassistant.core import HomeAssistant
+from homeassistant.helpers.entity import DeviceInfo
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import (
     CoordinatorEntity,
     DataUpdateCoordinator,
+    UpdateFailed,
 )
-from homeassistant.helpers.entity import DeviceInfo
-from homeassistant.core import HomeAssistant
-from homeassistant.config_entries import ConfigEntry
-from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from . import DOMAIN
+from .client import FilenApiError, FilenClient
+from .const import (
+    ATTR_ACCOUNT_ID,
+    ATTR_AVATAR_URL,
+    ATTR_BASE_FOLDER_UUID,
+    ATTR_DISPLAY_NAME,
+    ATTR_EMAIL,
+    ATTR_IS_PREMIUM,
+    ATTR_NICK_NAME,
+    ATTR_PLAN_NAMES,
+    DOMAIN,
+    UPDATE_INTERVAL,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
-# Update frequency (every 30 minutes)
-UPDATE_INTERVAL = timedelta(minutes=30)
+
+@dataclass(frozen=True, kw_only=True)
+class FilenSensorEntityDescription(SensorEntityDescription):
+    """Describes a Filen sensor."""
+
+    value_fn: Callable[[dict[str, Any]], Any]
+
+
+SENSOR_DESCRIPTIONS: tuple[FilenSensorEntityDescription, ...] = (
+    FilenSensorEntityDescription(
+        key="storage_used",
+        translation_key="storage_used",
+        native_unit_of_measurement=UnitOfInformation.BYTES,
+        device_class=SensorDeviceClass.DATA_SIZE,
+        state_class=SensorStateClass.MEASUREMENT,
+        suggested_display_precision=2,
+        value_fn=lambda data: data.get("storage_used"),
+    ),
+    FilenSensorEntityDescription(
+        key="storage_total",
+        translation_key="storage_total",
+        native_unit_of_measurement=UnitOfInformation.BYTES,
+        device_class=SensorDeviceClass.DATA_SIZE,
+        state_class=SensorStateClass.MEASUREMENT,
+        suggested_display_precision=2,
+        value_fn=lambda data: data.get("storage_total"),
+    ),
+    FilenSensorEntityDescription(
+        key="storage_percentage",
+        translation_key="storage_percentage",
+        native_unit_of_measurement=PERCENTAGE,
+        state_class=SensorStateClass.MEASUREMENT,
+        suggested_display_precision=2,
+        icon="mdi:cloud-percent",
+        value_fn=lambda data: data.get("storage_percentage"),
+    ),
+)
+
 
 async def async_setup_entry(
-    hass: HomeAssistant, 
-    entry: ConfigEntry, 
-    async_add_entities: AddEntitiesCallback
+    hass: HomeAssistant,
+    entry: ConfigEntry,
+    async_add_entities: AddEntitiesCallback,
 ) -> None:
-    """Set up Filen.io sensors based on a config entry."""
-    filen_client = hass.data[DOMAIN][entry.entry_id]
-    
-    # Create update coordinator
-    coordinator = FilenDataUpdateCoordinator(hass, filen_client)
-    
-    # Fetch initial data
+    """Set up Filen sensors based on a config entry."""
+    client: FilenClient = entry.runtime_data
+    coordinator = FilenDataUpdateCoordinator(hass, client)
     await coordinator.async_config_entry_first_refresh()
-    
-    # Create entities
-    entities = [
-        FilenStorageUsageSensor(coordinator, "storage_used", "Storage Used"),
-        FilenStorageUsageSensor(coordinator, "storage_total", "Storage Total"),
-        FilenStorageUsageSensor(coordinator, "storage_percentage", "Storage Usage Percentage"),
-        FilenStorageUploadSensor(coordinator, "upload_speed", "Upload Speed"),
-    ]
-    
-    async_add_entities(entities)
+
+    async_add_entities(
+        FilenAccountSensor(coordinator, entry, description)
+        for description in SENSOR_DESCRIPTIONS
+    )
 
 
-class FilenDataUpdateCoordinator(DataUpdateCoordinator):
-    """Class to manage fetching Filen.io data."""
+class FilenDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
+    """Fetch and cache Filen account data."""
 
-    def __init__(self, hass, filen_client):
+    def __init__(self, hass: HomeAssistant, client: FilenClient) -> None:
         """Initialize the data coordinator."""
         super().__init__(
             hass,
@@ -64,106 +106,56 @@ class FilenDataUpdateCoordinator(DataUpdateCoordinator):
             name=DOMAIN,
             update_interval=UPDATE_INTERVAL,
         )
-        self.filen_client = filen_client
-        self.user_info = None
+        self.client = client
 
-    async def _async_update_data(self):
-        """Fetch data from Filen.io."""
+    async def _async_update_data(self) -> dict[str, Any]:
+        """Fetch account/storage data from Filen."""
         try:
             async with async_timeout.timeout(30):
-                storage_data = await self.filen_client.get_storage_usage()
-                user_data = await self.filen_client.get_user_info()
-                
-                # Store user info for device info
-                self.user_info = user_data
-                
-                # Calculate the storage percentage
-                storage_percentage = 0
-                if storage_data["maxStorage"] > 0:
-                    storage_percentage = (storage_data["storage"] / storage_data["maxStorage"]) * 100
-                
-                return {
-                    "storage_used": storage_data["storage"],
-                    "storage_total": storage_data["maxStorage"],
-                    "storage_percentage": storage_percentage,
-                    "upload_speed": storage_data["maxUploadSpeed"],
-                    "email": user_data["email"],
-                    "plan": user_data["plan"],
-                }
-        except Exception as err:
-            _LOGGER.error(f"Error updating Filen.io data: {err}")
-            raise
+                return await self.client.async_get_account_data()
+        except FilenApiError as err:
+            raise UpdateFailed(f"Error communicating with Filen: {err}") from err
 
 
-class FilenStorageUsageSensor(CoordinatorEntity, SensorEntity):
-    """Sensor representing Filen.io storage usage."""
+class FilenAccountSensor(CoordinatorEntity[FilenDataUpdateCoordinator], SensorEntity):
+    """Sensor representing one Filen account/storage value."""
 
-    def __init__(self, coordinator, sensor_type, name):
+    entity_description: FilenSensorEntityDescription
+    _attr_has_entity_name = True
+
+    def __init__(
+        self,
+        coordinator: FilenDataUpdateCoordinator,
+        entry: ConfigEntry,
+        description: FilenSensorEntityDescription,
+    ) -> None:
         """Initialize the sensor."""
         super().__init__(coordinator)
-        self.sensor_type = sensor_type
-        self._name = name
-        self._attr_unique_id = f"filen_{sensor_type}"
-        
-        if sensor_type == "storage_percentage":
-            self._attr_native_unit_of_measurement = "%"
-            self._attr_device_class = None
-            self._attr_state_class = SensorStateClass.MEASUREMENT
-            self._attr_icon = "mdi:percent"
-        else:
-            self._attr_device_class = SensorDeviceClass.DATA_SIZE
-            self._attr_native_unit_of_measurement = UnitOfInformation.BYTES
-            self._attr_state_class = SensorStateClass.MEASUREMENT
-            self._attr_icon = "mdi:cloud"
-
-    @property
-    def name(self):
-        """Return the name of the sensor."""
-        if self.coordinator.user_info:
-            email = self.coordinator.data.get("email", "")
-            return f"Filen {email} {self._name}"
-        return f"Filen {self._name}"
-
-    @property
-    def native_value(self):
-        """Return the state of the sensor."""
-        if self.coordinator.data:
-            return self.coordinator.data.get(self.sensor_type, 0)
-        return 0
-
-    @property
-    def extra_state_attributes(self):
-        """Return additional information about the sensor."""
-        if not self.coordinator.data:
-            return {}
-        
-        # Add relevant attributes
-        return {
-            "plan": self.coordinator.data.get("plan", "Unknown"),
-            "email": self.coordinator.data.get("email", "Unknown"),
-        }
-
-    @property
-    def device_info(self):
-        """Return device information about this entity."""
-        if not self.coordinator.user_info:
-            return None
-            
-        return DeviceInfo(
-            identifiers={(DOMAIN, self.coordinator.data.get("email", "unknown"))},
-            name=f"Filen.io ({self.coordinator.data.get('email', 'unknown')})",
+        self.entity_description = description
+        self._attr_unique_id = f"{entry.entry_id}_{description.key}"
+        self._attr_device_info = DeviceInfo(
+            identifiers={(DOMAIN, entry.entry_id)},
+            name=entry.title,
             manufacturer="Filen",
-            model=self.coordinator.data.get("plan", "Unknown"),
-            sw_version="1.0.0",
         )
 
+    @property
+    def native_value(self) -> Any:
+        """Return the sensor value."""
+        return self.entity_description.value_fn(self.coordinator.data or {})
 
-class FilenStorageUploadSensor(FilenStorageUsageSensor):
-    """Sensor representing Filen.io upload speed."""
-
-    def __init__(self, coordinator, sensor_type, name):
-        """Initialize the upload speed sensor."""
-        super().__init__(coordinator, sensor_type, name)
-        self._attr_device_class = SensorDeviceClass.DATA_RATE
-        self._attr_native_unit_of_measurement = UnitOfDataRate.BYTES_PER_SECOND
-        self._attr_icon = "mdi:upload"
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        """Return additional account details."""
+        data = self.coordinator.data or {}
+        attrs = {
+            ATTR_EMAIL: data.get("email"),
+            ATTR_ACCOUNT_ID: data.get("account_id"),
+            ATTR_IS_PREMIUM: data.get("is_premium"),
+            ATTR_BASE_FOLDER_UUID: data.get("base_folder_uuid"),
+            ATTR_AVATAR_URL: data.get("avatar_url"),
+            ATTR_DISPLAY_NAME: data.get("display_name"),
+            ATTR_NICK_NAME: data.get("nick_name"),
+            ATTR_PLAN_NAMES: data.get("plan_names"),
+        }
+        return {key: value for key, value in attrs.items() if value not in (None, "", [])}
