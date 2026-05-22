@@ -33,13 +33,13 @@
   "entity": {
     "sensor": {
       "storage_used": {
-        "name": "Storage used"
+        "name": "Storage Used"
       },
       "storage_total": {
-        "name": "Storage total"
+        "name": "Storage Total"
       },
       "storage_percentage": {
-        "name": "Storage used percentage"
+        "name": "Storage Used Percentage"
       }
     }
   }
