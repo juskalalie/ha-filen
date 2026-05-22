@@ -1,0 +1,36 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Filen",
+        "description": "Connect your Filen account to expose account and storage sensors.",
+        "data": {
+          "email": "Email",
+          "password": "Password",
+          "two_factor_code": "Two-factor code"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Could not connect to Filen.",
+      "invalid_auth": "Invalid Filen credentials or two-factor code.",
+      "unknown": "Unexpected error."
+    },
+    "abort": {
+      "already_configured": "This Filen account is already configured."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "storage_used": {
+        "name": "Storage used"
+      },
+      "storage_total": {
+        "name": "Storage total"
+      },
+      "storage_percentage": {
+        "name": "Storage used percentage"
+      }
+    }
+  }
+}
