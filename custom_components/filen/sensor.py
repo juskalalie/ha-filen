@@ -40,6 +40,19 @@ from .const import (
 
 _LOGGER = logging.getLogger(__name__)
 
+BYTES_PER_GIGABYTE = 1_000_000_000
+
+
+def _bytes_to_gigabytes(value: Any) -> float | None:
+    """Convert a byte value returned by Filen into decimal gigabytes."""
+    if value is None:
+        return None
+
+    try:
+        return round(float(value) / BYTES_PER_GIGABYTE, 2)
+    except (TypeError, ValueError):
+        return None
+
 
 @dataclass(frozen=True, kw_only=True)
 class FilenSensorEntityDescription(SensorEntityDescription):
@@ -52,20 +65,20 @@ SENSOR_DESCRIPTIONS: tuple[FilenSensorEntityDescription, ...] = (
     FilenSensorEntityDescription(
         key="storage_used",
         translation_key="storage_used",
-        native_unit_of_measurement=UnitOfInformation.BYTES,
+        native_unit_of_measurement=UnitOfInformation.GIGABYTES,
         device_class=SensorDeviceClass.DATA_SIZE,
         state_class=SensorStateClass.MEASUREMENT,
         suggested_display_precision=2,
-        value_fn=lambda data: data.get("storage_used"),
+        value_fn=lambda data: _bytes_to_gigabytes(data.get("storage_used")),
     ),
     FilenSensorEntityDescription(
         key="storage_total",
         translation_key="storage_total",
-        native_unit_of_measurement=UnitOfInformation.BYTES,
+        native_unit_of_measurement=UnitOfInformation.GIGABYTES,
         device_class=SensorDeviceClass.DATA_SIZE,
         state_class=SensorStateClass.MEASUREMENT,
         suggested_display_precision=2,
-        value_fn=lambda data: data.get("storage_total"),
+        value_fn=lambda data: _bytes_to_gigabytes(data.get("storage_total")),
     ),
     FilenSensorEntityDescription(
         key="storage_percentage",
