@@ -20,6 +20,9 @@ Each sensor also exposes account attributes when Filen returns them, including e
 4. Go to Settings -> Devices & services -> Add integration -> Filen.
 5. Enter your Filen email, password, and optional two-factor code.
 
+If your Filen account has two-factor authentication enabled, enter a current code only during setup or reauthentication.
+The integration stores the Filen API key returned by login and does not store or reuse one-time two-factor codes.
+
 ## Notes
 
 This integration uses Filen's public web API endpoints used by the official SDK for account metadata:

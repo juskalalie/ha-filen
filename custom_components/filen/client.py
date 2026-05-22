@@ -32,17 +32,21 @@ class FilenClient:
         email: str,
         password: str,
         two_factor_code: str | None = None,
+        api_key: str | None = None,
     ) -> None:
         """Initialize the client."""
         self.session = session
         self.email = email
         self.password = password
-        self.two_factor_code = two_factor_code or "XXXXXX"
-        self.api_key: str | None = None
+        self.two_factor_code = self._normalize_two_factor_code(two_factor_code)
+        self.api_key = api_key
         self.auth_version: int | None = None
 
     async def authenticate(self) -> None:
         """Authenticate and store the API key for subsequent requests."""
+        if self.api_key:
+            return
+
         auth_info = await self._request(
             "POST",
             "/v3/auth/info",
@@ -214,6 +218,15 @@ class FilenClient:
             return derived[len(derived) // 2 :]
 
         raise FilenAuthError(f"Unsupported Filen auth version: {auth_version}")
+
+    @staticmethod
+    def _normalize_two_factor_code(two_factor_code: str | None) -> str:
+        """Return a Filen-compatible two-factor code value."""
+        if two_factor_code is None:
+            return "XXXXXX"
+
+        stripped_code = str(two_factor_code).strip().replace(" ", "")
+        return stripped_code or "XXXXXX"
 
     @staticmethod
     def _as_int(value: Any) -> int:

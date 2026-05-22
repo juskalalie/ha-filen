@@ -7,6 +7,7 @@ from datetime import timedelta
 DOMAIN = "filen"
 
 CONF_TWO_FACTOR_CODE = "two_factor_code"
+CONF_API_KEY = "api_key"
 
 API_BASE_URL = "https://gateway.filen.io"
 REQUEST_TIMEOUT = 30
