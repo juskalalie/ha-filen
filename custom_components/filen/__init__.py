@@ -11,7 +11,7 @@ from homeassistant.exceptions import ConfigEntryAuthFailed, ConfigEntryNotReady
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
 from .client import FilenApiError, FilenAuthError, FilenClient
-from .const import CONF_TWO_FACTOR_CODE
+from .const import CONF_API_KEY
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -24,11 +24,20 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         session=async_get_clientsession(hass),
         email=entry.data[CONF_EMAIL],
         password=entry.data[CONF_PASSWORD],
-        two_factor_code=entry.data.get(CONF_TWO_FACTOR_CODE),
+        api_key=entry.data.get(CONF_API_KEY),
     )
 
     try:
         await client.authenticate()
+        if client.api_key != entry.data.get(CONF_API_KEY):
+            hass.config_entries.async_update_entry(
+                entry,
+                data={
+                    CONF_EMAIL: entry.data[CONF_EMAIL],
+                    CONF_PASSWORD: entry.data[CONF_PASSWORD],
+                    CONF_API_KEY: client.api_key,
+                },
+            )
     except FilenAuthError as exc:
         raise ConfigEntryAuthFailed(str(exc)) from exc
     except FilenApiError as exc:

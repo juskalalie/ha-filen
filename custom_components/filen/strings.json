@@ -9,6 +9,14 @@
           "password": "Password",
           "two_factor_code": "Two-factor code"
         }
+      },
+      "reauth_confirm": {
+        "title": "Reauthenticate Filen",
+        "description": "Enter your Filen password and, if enabled, a current two-factor code. One-time two-factor codes are not stored.",
+        "data": {
+          "password": "Password",
+          "two_factor_code": "Two-factor code"
+        }
       }
     },
     "error": {
@@ -17,7 +25,9 @@
       "unknown": "Unexpected error."
     },
     "abort": {
-      "already_configured": "This Filen account is already configured."
+      "already_configured": "This Filen account is already configured.",
+      "reauth_successful": "Filen reauthentication was successful.",
+      "reauth_failed": "Filen reauthentication failed."
     }
   },
   "entity": {
